@@ -1,0 +1,53 @@
+# Build folders
+build/
+build-*/
+
+# Qt Creator / CMake
+*.user
+*.user.*
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+install_manifest.txt
+
+# Qt Creator auto-generated QML stuff
+*.qmlc
+*.jsc
+.qmake.stash
+
+# Qt Creator session/backup files
+*.autosave
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.qmlproject.user
+*.qmlproject.user.*
+*.creator.*
+*.creator
+
+# VS Code settings (if you ever use it)
+.vscode/
+
+# Visual Studio files
+*.VC.db
+*.VC.VC.opendb
+*.sln
+*.vcxproj*
+*.pdb
+*.idb
+*.obj
+*.tlog
+*.ipch
+*.log
+*.opensdf
+*.sdf
+
+# OS / misc
+.DS_Store
+Thumbs.db
+*.orig
+*.bak
+*.swp
