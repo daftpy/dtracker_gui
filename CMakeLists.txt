@@ -22,14 +22,21 @@ set(QML_IMPORT_PATH
 set(CMAKE_AUTOMOC ON)
 set(QT_QML_GENERATE_QMLLS_INI ON)
 
-# Bring in dtracker_engine via FetchContent
-include(FetchContent)
-FetchContent_Declare(
-    dtracker_engine
-    GIT_REPOSITORY https://github.com/daftpy/dtracker_engine.git
-    GIT_TAG main
-)
-FetchContent_MakeAvailable(dtracker_engine)
+# Determine if local engine source exists
+if(EXISTS "${CMAKE_SOURCE_DIR}/../projects/dtracker_engine/CMakeLists.txt")
+    message(STATUS "Using local dtracker_engine at ../dtracker_engine")
+    add_subdirectory(${CMAKE_SOURCE_DIR}/../projects/dtracker_engine dtracker_engine_build)
+else()
+    message(STATUS "Fetching dtracker_engine from GitHub")
+    include(FetchContent)
+    FetchContent_Declare(
+        dtracker_engine
+        GIT_REPOSITORY https://github.com/daftpy/dtracker_engine.git
+        GIT_TAG main # Prefer pinned tag in production
+    )
+    FetchContent_MakeAvailable(dtracker_engine)
+endif()
+
 
 # Add subdirectories for components/modules
 add_subdirectory(src/audio)
