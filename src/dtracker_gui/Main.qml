@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import dtracker_gui
+import dtracker_gui.audio
 
 Window {
     minimumWidth: 640

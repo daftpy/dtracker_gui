@@ -16,6 +16,7 @@ install_manifest.txt
 *.qmlc
 *.jsc
 .qmake.stash
+**.qmlls.ini
 
 # Qt Creator session/backup files
 *.autosave
