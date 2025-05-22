@@ -6,7 +6,7 @@
 #include <QtQmlIntegration/qqmlintegration.h>
 #include <optional>
 #include "types/deviceinfo.h"
-#include <engine/audio_engine.hpp>
+#include "audio/engine.hpp"
 
 namespace Dtracker::Audio {
     class Manager : public QObject
@@ -26,7 +26,7 @@ namespace Dtracker::Audio {
         void deviceInfoChanged();
 
     private:
-        dtracker::engine::AudioEngine m_engine;
+        dtracker::audio::Engine m_engine;
         std::optional<Types::DeviceInfo> m_currentDeviceInfo;
     };
 
