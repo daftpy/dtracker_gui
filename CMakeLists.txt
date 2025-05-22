@@ -32,11 +32,12 @@ qt_add_qml_module(appdtracker_gui
     VERSION 1.0
     QML_FILES
         Main.qml
+        qml/audio/AudioSettingsPage.qml
     SOURCES
         audio/audiomanager.h audio/audiomanager.cpp
         audio/types/audiodeviceinfo.h audio/types/audiodeviceinfo.cpp
-        RESOURCES README.md
-        RESOURCES .gitignore
+    RESOURCES README.md
+    RESOURCES .gitignore
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

@@ -1,9 +1,10 @@
 import QtQuick
+import QtQuick.Controls
 import dtracker_gui
 
 Window {
-    width: 640
-    height: 480
+    minimumWidth: 640
+    minimumHeight: 480
     visible: true
     title: qsTr("Hello World")
 
@@ -11,21 +12,29 @@ Window {
         id: audioManager
     }
 
-    Column {
-        anchors.fill: parent;
-        Text {
-            id: deviceInfoTitle;
-            text: "Current Device";
-            font.bold: true;
-        }
+    StackView {
+        id: mainView
+        anchors.fill: parent
 
-        Text {
-            id: deviceName
-            text: audioManager.hasDeviceInfo && audioManager.deviceInfo.name;
+        initialItem: AudioSettingsPage {
+            info: audioManager.deviceInfo;
+
+            anchors.fill: parent
+
+            onClosePage: {
+                console.log("pop");
+                mainView.replace(mainPage);
+            }
         }
-        Text {
-            id: deviceOutputChannels
-            text: audioManager.hasDeviceInfo && audioManager.deviceInfo.outputChannels;
+    }
+
+    Component {
+        id: mainPage
+
+        Page {
+            Text {
+                text: "Main Page"
+            }
         }
     }
 }

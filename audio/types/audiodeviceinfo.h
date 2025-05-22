@@ -18,7 +18,7 @@ class AudioDeviceInfo
     Q_PROPERTY(bool isDefaultInput MEMBER isDefaultInput CONSTANT)
     Q_PROPERTY(QList<unsigned int> sampleRates MEMBER sampleRates CONSTANT)
     Q_PROPERTY(unsigned int preferredSampleRate MEMBER preferredSampleRate CONSTANT)
-    QML_VALUE_TYPE(audioDevice)
+    QML_VALUE_TYPE(audioDeviceInfo)
 public:
     AudioDeviceInfo();
     explicit AudioDeviceInfo(const RtAudio::DeviceInfo& info);
