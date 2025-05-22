@@ -6,8 +6,8 @@ qt_add_qml_module(audio
     QML_FILES
         qml/pages/AudioSettingsPage.qml
     SOURCES
-        audiomanager.h audiomanager.cpp
-        types/audiodeviceinfo.h types/audiodeviceinfo.cpp
+        manager.h manager.cpp
+        types/deviceinfo.h types/deviceinfo.cpp
 )
 
 target_include_directories(audio PUBLIC

@@ -12,6 +12,12 @@ find_package(Qt6 REQUIRED COMPONENTS Quick)
 # Standard Qt project setup (enables features like QML type generation)
 qt_standard_project_setup(REQUIRES 6.8)
 
+# Ensure QML language server and Qt Creator can locate compiled QML modules
+set(QML_IMPORT_PATH
+    ${CMAKE_BINARY_DIR}/qt/qml
+    CACHE STRING "" FORCE
+)
+
 # Enable automatic MOC and QML type information generation
 set(CMAKE_AUTOMOC ON)
 set(QT_QML_GENERATE_QMLLS_INI ON)
