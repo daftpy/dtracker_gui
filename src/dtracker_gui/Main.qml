@@ -25,6 +25,10 @@ Window {
                 console.log("pop");
                 mainView.replace(mainPage);
             }
+
+            onStartEngine: {
+                audioManager.startEngine();
+            }
         }
     }
 

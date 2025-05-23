@@ -22,6 +22,8 @@ namespace Dtracker::Audio {
         bool hasDeviceInfo() const;
         Types::DeviceInfo deviceInfo() const;
 
+        Q_INVOKABLE void startEngine();
+
     signals:
         void deviceInfoChanged();
 

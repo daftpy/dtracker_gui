@@ -6,6 +6,7 @@ Item {
     id: audioSettingsPage
     property audioDeviceInfo info
     signal closePage()
+    signal startEngine()
 
     ColumnLayout {
         anchors.fill: parent
@@ -53,10 +54,15 @@ Item {
         }
 
         RowLayout {
-            // Button {
-            //     id: saveButton
-            //     text: "Save"
-            // }
+            Layout.alignment: Qt.AlignHCenter
+            Button {
+                id: startButton
+                text: "Start"
+                onPressed: {
+                    audioSettingsPage.startEngine();
+                }
+            }
+
             Button {
                 id: exitButton
                 text: "Exit"

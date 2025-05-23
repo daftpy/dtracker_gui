@@ -6,19 +6,21 @@ namespace Dtracker::Audio {
     Manager::Manager(QObject *parent)
         : QObject{parent}
     {
-        // Attempt to start the AudioEngine
-        if (!m_engine.start()) {
-            qDebug() << "AudioEngine failed to start!";
-        }
+        // Create the discovery manager
+        dtracker::audio::DeviceManager dm = m_engine.createDeviceManager();
 
-        // Attempt to retrieve the current device info (optional)
-        auto deviceInfoOpt = m_engine.currentDeviceInfo();
-        if (deviceInfoOpt.has_value()) {
-            // If a valid device was found, convert and store it in m_currentDeviceInfo
-            m_currentDeviceInfo = Types::DeviceInfo(*deviceInfoOpt);
+        if (dm.currentDeviceInfo().has_value()) {
+            auto deviceInfo = dm.currentDeviceInfo().value();
+            m_currentDeviceInfo = Types::DeviceInfo(deviceInfo);
+
+            m_engine.setOutputDevice(deviceInfo.ID);
+
+            // Attempt to start the AudioEngine
+            // if (!m_engine.start()) {
+            //     qDebug() << "AudioEngine failed to start!";
+            // }
         } else {
-            // Log a warning if no valid audio output device is available
-            qDebug() << "AudioEngine started with no valid device info";
+            qDebug() << "AudioEngine failed to start due to no usable audio device";
         }
     }
 
@@ -32,6 +34,16 @@ namespace Dtracker::Audio {
     Types::DeviceInfo Manager::deviceInfo() const
     {
         return m_currentDeviceInfo.value_or(Types::DeviceInfo{});
+    }
+
+    void Manager::startEngine()
+    {
+        if (m_engine.isStreamRunning())
+            return;
+
+        if (!m_engine.start()) {
+            qDebug() << "AudioEngine failed to start!";
+        }
     }
 
 }
