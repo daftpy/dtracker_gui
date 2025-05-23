@@ -7,30 +7,37 @@
 #include <optional>
 #include "types/deviceinfo.h"
 #include "audio/engine.hpp"
+#include "audio/playback_manager.hpp"
 
 namespace Dtracker::Audio {
-    class Manager : public QObject
-    {
-        Q_OBJECT
-        QML_NAMED_ELEMENT(AudioManager)
 
-        Q_PROPERTY(bool hasDeviceInfo READ hasDeviceInfo NOTIFY deviceInfoChanged)
-        Q_PROPERTY(Audio::Types::DeviceInfo deviceInfo READ deviceInfo NOTIFY deviceInfoChanged)
-    public:
-        explicit Manager(QObject *parent = nullptr);
+class Manager : public QObject
+{
+    Q_OBJECT
+    QML_NAMED_ELEMENT(AudioManager)
 
-        bool hasDeviceInfo() const;
-        Types::DeviceInfo deviceInfo() const;
+    Q_PROPERTY(bool hasDeviceInfo READ hasDeviceInfo NOTIFY deviceInfoChanged)
+    Q_PROPERTY(Audio::Types::DeviceInfo deviceInfo READ deviceInfo NOTIFY deviceInfoChanged)
 
-        Q_INVOKABLE void startEngine();
+public:
+    explicit Manager(QObject *parent = nullptr);
 
-    signals:
-        void deviceInfoChanged();
+    bool hasDeviceInfo() const;
+    Types::DeviceInfo deviceInfo() const;
 
-    private:
-        dtracker::audio::Engine m_engine;
-        std::optional<Types::DeviceInfo> m_currentDeviceInfo;
-    };
+    Q_INVOKABLE void startEngine();
+    Q_INVOKABLE void startSin();
+    Q_INVOKABLE void stopSin();
 
-    #endif // MANAGER_H
-}
+signals:
+    void deviceInfoChanged();
+
+private:
+    dtracker::audio::Engine m_engine;
+    std::optional<Types::DeviceInfo> m_currentDeviceInfo;
+    std::unique_ptr<dtracker::audio::PlaybackManager> m_playbackManager;
+};
+
+} // namespace Dtracker::Audio
+
+#endif // MANAGER_H

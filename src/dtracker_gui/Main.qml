@@ -22,12 +22,13 @@ Window {
             anchors.fill: parent
 
             onClosePage: {
-                console.log("pop");
-                mainView.replace(mainPage);
+                // mainView.replace(mainPage);
+                audioManager.stopSin();
             }
 
             onStartEngine: {
-                audioManager.startEngine();
+                // audioManager.startEngine();
+                audioManager.startSin();
             }
         }
     }

@@ -8,6 +8,8 @@ namespace Dtracker::Audio {
     {
         // Create the discovery manager
         dtracker::audio::DeviceManager dm = m_engine.createDeviceManager();
+        //dtracker::audio::PlaybackManager pm = dtracker::audio::PlaybackManager(&m_engine);
+        m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(&m_engine);
 
         if (dm.currentDeviceInfo().has_value()) {
             auto deviceInfo = dm.currentDeviceInfo().value();
@@ -43,6 +45,20 @@ namespace Dtracker::Audio {
 
         if (!m_engine.start()) {
             qDebug() << "AudioEngine failed to start!";
+        }
+    }
+
+    void Manager::startSin()
+    {
+        if (m_playbackManager) {
+            m_playbackManager.get()->playTestTone(440);
+        }
+    }
+
+    void Manager::stopSin()
+    {
+        if (m_playbackManager) {
+            m_playbackManager.get()->stopPlayback();
         }
     }
 
