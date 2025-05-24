@@ -4,7 +4,7 @@ qt_add_qml_module(audio
     VERSION 1.0
     OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qt/qml/dtracker_gui/audio"
     QML_FILES
-        qml/pages/AudioSettingsPage.qml
+    qml/pages/DeviceInfoPage.qml
     SOURCES
         manager.h manager.cpp
         types/deviceinfo.h types/deviceinfo.cpp

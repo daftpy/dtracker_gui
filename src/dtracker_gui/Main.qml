@@ -16,7 +16,7 @@ Window {
         id: mainView
         anchors.fill: parent
 
-        initialItem: AudioSettingsPage {
+        initialItem: DeviceInfoPage {
             info: audioManager.deviceInfo;
 
             anchors.fill: parent
