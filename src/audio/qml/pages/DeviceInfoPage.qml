@@ -5,8 +5,8 @@ import QtQuick.Layouts
 Item {
     id: audioSettingsPage
     property audioDeviceInfo info
-    signal closePage()
-    signal startEngine()
+    signal stopTone()
+    signal startTone()
 
     ColumnLayout {
         anchors.fill: parent

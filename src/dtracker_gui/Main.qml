@@ -21,12 +21,12 @@ Window {
 
             anchors.fill: parent
 
-            onClosePage: {
+            onStopTone: {
                 // mainView.replace(mainPage);
                 audioManager.stopSin();
             }
 
-            onStartEngine: {
+            onStartTone: {
                 // audioManager.startEngine();
                 audioManager.startSin();
             }
