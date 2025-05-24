@@ -3,71 +3,78 @@
 
 namespace Dtracker::Audio {
 
-    Manager::Manager(QObject *parent)
-        : QObject{parent}
-    {
-        // Create the discovery manager
-        dtracker::audio::DeviceManager dm = m_engine.createDeviceManager();
-        //dtracker::audio::PlaybackManager pm = dtracker::audio::PlaybackManager(&m_engine);
-        m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(&m_engine);
+Manager::Manager(QObject *parent)
+    : QObject{parent}
+{
+    // Create DeviceManager using the engine's internal RtAudio instance
+    dtracker::audio::DeviceManager dm = m_engine.createDeviceManager();
 
-        if (dm.currentDeviceInfo().has_value()) {
-            auto deviceInfo = dm.currentDeviceInfo().value();
-            m_currentDeviceInfo = Types::DeviceInfo(deviceInfo);
+    // Create the PlaybackManager, responsible for routing decoded samples to the engine
+    m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(&m_engine);
 
-            m_engine.setOutputDevice(deviceInfo.ID);
+    // Attempt to find and set a valid output device
+    if (dm.currentDeviceInfo().has_value()) {
+        auto deviceInfo = dm.currentDeviceInfo().value();
+        m_currentDeviceInfo = Types::DeviceInfo(deviceInfo);
 
-            // Attempt to start the AudioEngine
-            if (!m_engine.start()) {
-                qDebug() << "AudioEngine failed to start!";
-            }
-        } else {
-            qDebug() << "AudioEngine failed to start due to no usable audio device";
-        }
-    }
+        m_engine.setOutputDevice(deviceInfo.ID);
 
-    // Expose whether we currently have device info
-    bool Manager::hasDeviceInfo() const
-    {
-        return m_currentDeviceInfo.has_value();
-    }
-
-    // Return the stored device info, or a default-constructed fallback if none available
-    Types::DeviceInfo Manager::deviceInfo() const
-    {
-        return m_currentDeviceInfo.value_or(Types::DeviceInfo{});
-    }
-
-    void Manager::startEngine()
-    {
-        if (m_engine.isStreamRunning())
-            return;
-
+        // Start the audio engine after setting the device
         if (!m_engine.start()) {
             qDebug() << "AudioEngine failed to start!";
         }
+    } else {
+        qDebug() << "AudioEngine failed to start due to no usable audio device";
     }
-
-    void Manager::startSin()
-    {
-        if (m_playbackManager) {
-            m_playbackManager.get()->playTestTone(440);
-        }
-    }
-
-    void Manager::stopSin()
-    {
-        if (m_playbackManager) {
-            m_playbackManager.get()->stopPlayback();
-        }
-    }
-
-    void Manager::playSample(std::vector<float> data, unsigned int rate)
-    {
-        qDebug() << "calling dtracker_engine::audio::PlaybackManager playSample";
-        qDebug() << "Playing sample of size:" << data.size();
-
-        m_playbackManager->playSample(std::move(data), rate);
-    }
-
 }
+
+// Returns true if a usable output device has been found
+bool Manager::hasDeviceInfo() const
+{
+    return m_currentDeviceInfo.has_value();
+}
+
+// Returns the stored output device info, or a fallback default if none
+Types::DeviceInfo Manager::deviceInfo() const
+{
+    return m_currentDeviceInfo.value_or(Types::DeviceInfo{});
+}
+
+// Starts the engine if it's not already running
+void Manager::startEngine()
+{
+    if (m_engine.isStreamRunning())
+        return;
+
+    if (!m_engine.start()) {
+        qDebug() << "AudioEngine failed to start!";
+    }
+}
+
+// Starts playback of a 440 Hz test tone
+void Manager::startSin()
+{
+    if (m_playbackManager) {
+        m_playbackManager->playTestTone(440);
+    }
+}
+
+// Stops any ongoing playback
+void Manager::stopSin()
+{
+    if (m_playbackManager) {
+        m_playbackManager->stopPlayback();
+    }
+}
+
+// Called when a decoded audio sample is ready
+// Forwards it to the playback manager for streaming via RtAudio
+void Manager::playSample(std::vector<float> data, unsigned int rate)
+{
+    qDebug() << "calling dtracker_engine::audio::PlaybackManager playSample";
+    qDebug() << "Playing sample of size:" << data.size();
+
+    m_playbackManager->playSample(std::move(data), rate);
+}
+
+} // namespace Dtracker::Audio

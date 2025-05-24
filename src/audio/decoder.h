@@ -18,26 +18,30 @@ class Decoder : public QObject
 public:
     explicit Decoder(QObject *parent = nullptr);
 
-    // Loads the file and emits a signal with decoded PCM data
+    // Begin decoding the audio file at the given path
     Q_INVOKABLE void load(const QString &filePath);
 
 signals:
-    // Emitted when decoding is complete and data is ready
+    // Emitted when decoding is complete and normalized float PCM data is ready
     void sampleReady(std::vector<float> pcmData, unsigned int sampleRate);
+
+    // Emitted if decoding fails (unsupported format, etc.)
     void errorOccurred(const QString &message);
 
 private slots:
+    // Triggered when a new decoded audio buffer is available
     void onBufferReady();
+
+    // Triggered when all decoding has finished
     void onFinished();
 
 private:
-    QAudioDecoder *m_decoder;
-    std::vector<float> m_accumulatedSamples;
-    int m_outputChannels = 0;
-    int m_sampleRate = 0;
+    QAudioDecoder *m_decoder;               // Decoding engine
+    std::vector<float> m_accumulatedSamples; // Holds float PCM samples
+    int m_outputChannels = 0;               // Stores the number of channels
+    int m_sampleRate = 0;                   // Needed to pass correct timing to audio playback
 };
 
 } // namespace Dtracker::Audio
-
 
 #endif // DECODER_H
