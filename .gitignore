@@ -52,3 +52,7 @@ Thumbs.db
 *.orig
 *.bak
 *.swp
+
+# Internal Documentation
+**GLOSSARY.md
+**PIPELINE.md

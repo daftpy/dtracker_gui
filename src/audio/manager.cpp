@@ -62,4 +62,12 @@ namespace Dtracker::Audio {
         }
     }
 
+    void Manager::playSample(std::vector<float> data, unsigned int rate)
+    {
+        qDebug() << "calling dtracker_engine::audio::PlaybackManager playSample";
+        qDebug() << "Playing sample of size:" << data.size();
+
+        m_playbackManager->playSample(std::move(data), rate);
+    }
+
 }

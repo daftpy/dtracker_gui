@@ -19,8 +19,10 @@ target_include_directories(appdtracker_gui PRIVATE
 # Link required libraries
 target_link_libraries(appdtracker_gui
     PRIVATE Qt6::Quick         # Qt Quick runtime
+    PRIVATE Qt6::Multimedia
     PRIVATE dtracker_engine    # Your audio engine library
     PRIVATE audioplugin        # AudioManager QML plugin (from src/audio)
+    PRIVATE fileplugin
 )
 
 # Set platform properties

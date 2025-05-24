@@ -28,6 +28,7 @@ public:
     Q_INVOKABLE void startEngine();
     Q_INVOKABLE void startSin();
     Q_INVOKABLE void stopSin();
+    Q_INVOKABLE void playSample(std::vector<float> data, unsigned int rate);
 
 signals:
     void deviceInfoChanged();

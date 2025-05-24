@@ -7,7 +7,7 @@ project(dtracker_gui VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Required Qt6 components
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia)
 
 # Standard Qt project setup (enables features like QML type generation)
 qt_standard_project_setup(REQUIRES 6.8)
@@ -40,4 +40,5 @@ endif()
 
 # Add subdirectories for components/modules
 add_subdirectory(src/audio)
+add_subdirectory(src/file)
 add_subdirectory(src/dtracker_gui)
