@@ -6,8 +6,8 @@
 #include <QtQmlIntegration/qqmlintegration.h>
 #include <optional>
 #include "types/deviceinfo.h"
-#include "audio/engine.hpp"
-#include "audio/playback_manager.hpp"
+#include <dtracker/audio/engine.hpp>
+#include <dtracker/audio/playback_manager.hpp>
 
 namespace Dtracker::Audio {
 

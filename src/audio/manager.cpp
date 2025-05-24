@@ -18,9 +18,9 @@ namespace Dtracker::Audio {
             m_engine.setOutputDevice(deviceInfo.ID);
 
             // Attempt to start the AudioEngine
-            // if (!m_engine.start()) {
-            //     qDebug() << "AudioEngine failed to start!";
-            // }
+            if (!m_engine.start()) {
+                qDebug() << "AudioEngine failed to start!";
+            }
         } else {
             qDebug() << "AudioEngine failed to start due to no usable audio device";
         }
