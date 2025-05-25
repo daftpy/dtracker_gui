@@ -4,7 +4,10 @@ qt_add_qml_module(file
     VERSION 1.0
     OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qt/qml/dtracker_gui/file"
     QML_FILES
-        qml/FileFinder.qml
+        qml/FilePickerDialog.qml
+    SOURCES
+        filesystemmodel.h filesystemmodel.cpp
+        QML_FILES qml/FileTreeView.qml
 )
 
 target_include_directories(file PUBLIC

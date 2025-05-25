@@ -17,58 +17,33 @@ Window {
         id: fileLoader
 
         onSampleReady: (pcmData, sampleRate) => {
-                           console.log("Playing sample");
-                           audioManager.playSample(pcmData, sampleRate)
-                       }
+            console.log("Playing sample");
+            audioManager.playSample(pcmData, sampleRate)
+        }
 
         onErrorOccurred: (error) => {
-                             console.log(error);
-                         }
+            console.log(error);
+        }
     }
-
-    // StackView {
-    //     id: mainView
-    //     anchors.fill: parent
-
-    //     initialItem: DeviceInfoPage {
-    //         info: audioManager.deviceInfo;
-
-    //         anchors.fill: parent
-
-    //         onStopTone: {
-    //             // mainView.replace(mainPage);
-    //             audioManager.stopSin();
-    //         }
-
-    //         onStartTone: {
-    //             // audioManager.startEngine();
-    //             audioManager.startSin();
-    //         }
-    //     }
-    // }
 
     StackView {
         id: mainView
         anchors.fill: parent
 
-        initialItem: FileFinder {
-            anchors.fill: parent
+        initialItem: FileTreeView {
 
-
-            onFileSelected: (path) => {
-                console.log(`Calling fileLoader.load(${path})`)
+            onPreviewSample: (path) => {
                 fileLoader.load(path);
             }
         }
     }
 
-    Component {
-        id: mainPage
+    FilePickerDialog {
+        anchors.fill: parent
 
-        Page {
-            Text {
-                text: "Main Page"
-            }
+        onFileSelected: (path) => {
+            console.log(`Calling fileLoader.load(${path})`)
+            fileLoader.load(path);
         }
     }
 }

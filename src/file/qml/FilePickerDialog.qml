@@ -16,6 +16,6 @@ Item {
     }
 
     Component.onCompleted: {
-        fileDialog.open();
+        // fileDialog.open();
     }
 }
