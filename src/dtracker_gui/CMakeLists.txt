@@ -21,6 +21,7 @@ target_link_libraries(appdtracker_gui
     PRIVATE Qt6::Quick         # Qt Quick runtime
     PRIVATE Qt6::Gui
     PRIVATE Qt6::Multimedia
+    PRIVATE Qt6::Svg
     PRIVATE dtracker_engine    # Your audio engine library
     PRIVATE audioplugin        # AudioManager QML plugin (from src/audio)
     PRIVATE fileplugin

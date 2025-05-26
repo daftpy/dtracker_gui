@@ -8,16 +8,16 @@
 namespace Dtracker::File {
 
 // Custom file system model exposing filtered file navigation and metadata to QML
-class FileSystemModel : public QFileSystemModel
+class FileTreeModel : public QFileSystemModel
 {
     Q_OBJECT
-    QML_NAMED_ELEMENT(FileSystemModel)
+    QML_NAMED_ELEMENT(FileTreeModel)
 
     // Expose rootIndex as a QML property to control tree view roots
     Q_PROPERTY(QModelIndex rootIndex READ rootIndex WRITE setRootIndex NOTIFY rootIndexChanged)
 
 public:
-    explicit FileSystemModel(QObject *parent = nullptr);
+    explicit FileTreeModel(QObject *parent = nullptr);
 
     // Override to restrict to one column (file name)
     int columnCount(const QModelIndex &parent) const override;

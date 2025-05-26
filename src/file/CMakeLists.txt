@@ -5,9 +5,15 @@ qt_add_qml_module(file
     OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qt/qml/dtracker_gui/file"
     QML_FILES
         qml/FilePickerDialog.qml
+    RESOURCES
+        "icons/folder.svg"
+        "icons/musicnotes.svg"
+        "icons/folderopen.svg"
     SOURCES
-        filesystemmodel.h filesystemmodel.cpp
-        QML_FILES qml/FileTreeView.qml
+        filetreemodel.h filetreemodel.cpp
+    QML_FILES
+        qml/FileTreeView.qml
+        QML_FILES qml/FileTreeDelegate.qml
 )
 
 target_include_directories(file PUBLIC
@@ -17,4 +23,5 @@ target_include_directories(file PUBLIC
 target_link_libraries(file
     PUBLIC dtracker_engine
     PRIVATE Qt6::Multimedia
+    PRIVATE Qt6::Svg
 )

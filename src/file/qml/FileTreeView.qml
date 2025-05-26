@@ -2,154 +2,126 @@ import QtQuick
 import QtQuick.Controls
 import dtracker_gui.file
 
+// This component displays a navigable tree view of the filesystem using a TreeView
+// and a custom QFileSystemModel-derived backend. It supports mouse and keyboard
+// interaction, allowing the user to explore and preview audio files (.wav, .aac).
 Item {
     id: root
     signal previewSample(path : string)
 
-    FileSystemModel {
+    FileTreeModel {
         id: fileModel
     }
 
-    TreeView {
-        id: fileTreeView
+    Rectangle {
+        anchors.fill: parent
+        color: "#32333d"
 
-        // Set a hard width for now
-        width: 150
-        height: parent.height
+        TreeView {
+            id: fileTreeView
 
-        clip: true
-        focus: true // Allows the component to grab focus
+            // Set a hard width for now
+            width: parent.width
+            height: parent.height
 
-        // Scroll behavior
-        boundsBehavior: Flickable.StopAtBounds
-        boundsMovement: Flickable.StopAtBounds
+            clip: true
+            focus: true // Allows the component to grab focus
 
-        // Stores the index of the currently hovered delegate.
-        // This avoids stale hover visuals caused by delegate reuse during expansion.
-        property int hoveredIndex: -1
+            // Scroll behavior
+            boundsBehavior: Flickable.StopAtBounds
+            boundsMovement: Flickable.StopAtBounds
 
-        // Stores the index of the selected (clicked) delegate.
-        property int lastIndex: -1
+            // Stores the index of the currently hovered delegate.
+            // This avoids stale hover visuals caused by delegate reuse during expansion.
+            property int hoveredIndex: -1
 
-        model: fileModel
-        rootIndex: fileModel.rootIndex
+            // Stores the index of the selected (clicked) delegate.
+            property int lastIndex: -1
 
-        delegate: TreeViewDelegate {
-            id: delegate
-            indentation: 8
-            implicitWidth: fileTreeView.width > 0 ? fileTreeView.width : 150
+            model: fileModel
+            rootIndex: fileModel.rootIndex
 
-            // Bind to the models role names, making them available in the delegate
-            required property int index
-            required property url filePath
-            required property string fileName
-
-            indicator: Text {
-                text: ">"
-                x: delegate.leftMargin + (delegate.depth * delegate.indentation)
-                color: delegate.index === fileTreeView.lastIndex ? "#8186a6" : "#eeeeee";
+            delegate: FileTreeDelegate {
+                id: delegate
             }
 
-            contentItem: Text {
-                width: parent.implicitWidth
-                text: delegate.fileName
-                color: "#eeeeee"
-                elide: Text.ElideRight
-            }
-
-            background: Rectangle {
-                color: (delegate.index === fileTreeView.lastIndex) ? "#464963"
-                    : ((fileTreeView.hoveredIndex == delegate.index) ? "#292b3b" : "#3d3e4a")
-            }
-
+            // If the mouse leaves the tree, reset hoverstate
             HoverHandler {
-                id: hoverHandler
+                id: fileTreeViewHover
 
                 onHoveredChanged: {
-                    if (hovered) {
-                        // Track hover at TreeView level to persist clean state
-                        fileTreeView.hoveredIndex = index;
+                    if (!hovered) {
+                        fileTreeView.hoveredIndex = -1;
                     }
                 }
             }
 
-            MouseArea {
-                id: mouseArea
-                anchors.fill: delegate
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    const path = model.filePath;
-                    console.log("Clicked:", path);
+            // Key handler for tracker-style navigation
+            Keys.onPressed: event => {
+                let nextIndex = fileTreeView.lastIndex;
 
-                    // Expand/collapse directory
-                    fileTreeView.toggleExpanded(delegate.row)
+                let expandDir = false;
 
-                    // Clear selection if directory is closed
-                    if (delegate.hasChildren && !delegate.expanded) {
-                        fileTreeView.lastIndex = -1;
-                    }
-
-                    // Mark current row as selected
-                    fileTreeView.lastIndex = delegate.index;
-
-                    // Emit signal to preview file if it's not a directory
-                    if (!delegate.hasChildren) {
-                        root.previewSample(path);
-                    }
-
-                    console.log(fileTreeView.lastIndex, delegate.index);
+                // Move the next index based on the key press and check bounds
+                switch (event.key) {
+                    case Qt.Key_W:
+                    case Qt.Key_Up:
+                        nextIndex = Math.max(0, fileTreeView.lastIndex - 1);
+                        break;
+                    case Qt.Key_S:
+                    case Qt.Key_Down:
+                        nextIndex = fileTreeView.lastIndex + 1;
+                        break;
+                    case Qt.Key_Space:
+                        // Mark dir for expansion/collapse
+                        expandDir = true;
+                        break;
+                    default:
+                        return;
                 }
-            }
-        }
-        // Key handler for tracker-style navigation
-        Keys.onPressed: event => {
-            let nextIndex = fileTreeView.lastIndex;
 
-            // Move the next index based on the key press and check bounds
-            switch (event.key) {
-                case Qt.Key_W:
-                case Qt.Key_Up:
-                    nextIndex = Math.max(0, fileTreeView.lastIndex - 1);
-                    break;
-                case Qt.Key_S:
-                case Qt.Key_Down:
-                    nextIndex = fileTreeView.lastIndex + 1;
-                    break;
-                default:
+                // Update selection
+                fileTreeView.lastIndex = nextIndex;
+
+                // Get the highlighted delegate
+                const row = fileTreeView.lastIndex;
+                const modelIndex = fileTreeView.index(row, 0);  // Get the QModelIndex from the visual row
+
+                const info = fileModel.fileInfoFromIndex(modelIndex);
+
+                // Preview file if it's not a directory
+                if (!info.isDir) {
+                    root.previewSample(info.path);
                     return;
+                }
+
+                // If expandDir true, collapse/expand the selected directory
+                if (info.isDir && expandDir) {
+                    if (fileTreeView.itemAtIndex(modelIndex).expanded) {
+                        fileTreeView.collapse(row);
+                    } else {
+                        fileTreeView.expand(row);
+                    }
+                }
+
+                // Stop event prop
+                event.accepted = true;
             }
+            Component.onCompleted: fileTreeView.forceActiveFocus()
 
-            // Update selection
-            fileTreeView.lastIndex = nextIndex;
+            // Styling for the scrollbar
+            ScrollIndicator.vertical: ScrollIndicator {
+                active: true
+                implicitWidth: 8
 
-            // Get the highlighted delegate
-            const row = fileTreeView.lastIndex;
-            const modelIndex = fileTreeView.index(row, 0);  // Get the QModelIndex from the visual row
+                contentItem: Rectangle {
+                    color: "#8fa1b8"
+                    opacity: fileTreeView.movingVertically ? 0.5 : 0.0
 
-            const info = fileModel.fileInfoFromIndex(modelIndex);
-
-            // Preview file if it's not a directory
-            if (!info.isDir) {
-                root.previewSample(info.path);
-            }
-
-            // Stop event prop
-            event.accepted = true;
-        }
-        Component.onCompleted: fileTreeView.forceActiveFocus()
-
-        // Styling for the scrollbar
-        ScrollIndicator.vertical: ScrollIndicator {
-            active: true
-            implicitWidth: 8
-
-            contentItem: Rectangle {
-                color: "#8fa1b8"
-                opacity: fileTreeView.movingVertically ? 0.5 : 0.0
-
-                Behavior on opacity {
-                    OpacityAnimator {
-                        duration: 300
+                    Behavior on opacity {
+                        OpacityAnimator {
+                            duration: 300
+                        }
                     }
                 }
             }

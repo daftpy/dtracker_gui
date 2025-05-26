@@ -26,15 +26,21 @@ Window {
         }
     }
 
-    StackView {
+    SplitView {
         id: mainView
         anchors.fill: parent
 
-        initialItem: FileTreeView {
-
+        FileTreeView {
+            SplitView.preferredWidth: 150
+            SplitView.fillHeight: true
             onPreviewSample: (path) => {
                 fileLoader.load(path);
             }
+        }
+
+        Rectangle {
+            SplitView.fillWidth: true
+            SplitView.fillHeight: true
         }
     }
 

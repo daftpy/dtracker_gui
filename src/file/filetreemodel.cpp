@@ -1,9 +1,9 @@
-#include "filesystemmodel.h"
+#include "filetreemodel.h"
 #include <QStandardPaths>
 
 namespace Dtracker::File {
 
-FileSystemModel::FileSystemModel(QObject *parent)
+FileTreeModel::FileTreeModel(QObject *parent)
 {
     // Show all files and folders except "." and ".."
     setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
@@ -17,20 +17,20 @@ FileSystemModel::FileSystemModel(QObject *parent)
 }
 
 // Only show one column (e.g., the file/folder name)
-int FileSystemModel::columnCount(const QModelIndex &parent) const
+int FileTreeModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     return 1;
 }
 
 // Return the currently set root index (used by TreeView)
-QModelIndex FileSystemModel::rootIndex() const
+QModelIndex FileTreeModel::rootIndex() const
 {
     return m_rootIndex;
 }
 
 // Set the root index and notify if changed
-void FileSystemModel::setRootIndex(const QModelIndex index)
+void FileTreeModel::setRootIndex(const QModelIndex index)
 {
     if (index == m_rootIndex)
         return;
@@ -40,7 +40,7 @@ void FileSystemModel::setRootIndex(const QModelIndex index)
 }
 
 // Set up the initial directory to browse from
-void FileSystemModel::setInitialDirectory(const QString &path)
+void FileTreeModel::setInitialDirectory(const QString &path)
 {
     QDir dir(path);
 
@@ -55,7 +55,7 @@ void FileSystemModel::setInitialDirectory(const QString &path)
 }
 
 // Retrieve basic file metadata (used in QML for preview and type checking)
-QVariantMap FileSystemModel::fileInfoFromIndex(const QModelIndex &index) const
+QVariantMap FileTreeModel::fileInfoFromIndex(const QModelIndex &index) const
 {
     QVariantMap result;
 
@@ -69,7 +69,7 @@ QVariantMap FileSystemModel::fileInfoFromIndex(const QModelIndex &index) const
 }
 
 // Provide a default directory (in this case, Downloads folder)
-QString FileSystemModel::getDefaultRootDir()
+QString FileTreeModel::getDefaultRootDir()
 {
     return QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
 }
