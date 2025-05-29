@@ -9,34 +9,45 @@
 #include "sample_registry_model.h"
 
 namespace Dtracker::Tracker::Sample {
-    class SampleRegistry : public QObject
-    {
-        Q_OBJECT
-        QML_ELEMENT
+// Exposes a list of registered samples and links to the audio sample manager
+class SampleRegistry : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
 
-        Q_PROPERTY(dtracker::audio::SampleManager* sampleManager READ sampleManager WRITE setSampleManager NOTIFY sampleManagerChanged)
-        Q_PROPERTY(SampleRegistryModel* model READ model CONSTANT)
+    // Exposes the SampleManager pointer to QML, intended to be set by the audiomanager.sampleManager()
+    Q_PROPERTY(dtracker::audio::SampleManager* sampleManager READ sampleManager WRITE setSampleManager NOTIFY sampleManagerChanged)
 
-    public:
-        explicit SampleRegistry(QObject *parent = nullptr);
+    // Exposes the list model (used for displaying samples in QML)
+    Q_PROPERTY(SampleRegistryModel* model READ model CONSTANT)
 
-        dtracker::audio::SampleManager* sampleManager() const { return m_sampleManager; }
-        void setSampleManager(dtracker::audio::SampleManager* manager);
+public:
+    explicit SampleRegistry(QObject *parent = nullptr);
 
-        SampleRegistryModel* model() const { return m_model; } // exposes the registry listmodel to qml
+    dtracker::audio::SampleManager* sampleManager() const { return m_sampleManager; }
+    void setSampleManager(dtracker::audio::SampleManager* manager);
 
-        Q_INVOKABLE void addSample(const QString& name, std::vector<float> pcm, unsigned int rate);
+    // Returns the internal model for sample listing
+    SampleRegistryModel* model() const { return m_model; }
 
-    signals:
-        void sampleManagerChanged();
-        void sampleAdded(int id);
+    // Adds a sample to the manager and updates the model
+    Q_INVOKABLE void addSample(const QString& name, std::vector<float> pcm, unsigned int rate);
 
-    private:
-        dtracker::audio::SampleManager* m_sampleManager = nullptr;
-        SampleRegistryModel* m_model{new SampleRegistryModel(this)};
-    };
+    // Removes a sample by ID and updates the model
+    Q_INVOKABLE void removeSample(int id);
+
+signals:
+    void sampleManagerChanged();  // Emitted when the sample manager is changed
+    void sampleAdded(int id);     // Emitted when a sample is added
+    void sampleRemoved(int id);   // Emitted when a sample is removed
+
+private:
+    dtracker::audio::SampleManager* m_sampleManager = nullptr;  // Pointer to the audio sample manager
+    SampleRegistryModel* m_model{new SampleRegistryModel(this)}; // List model containing sample metadata
+};
 }
 
+// Registers the SampleManager pointer type with Qt's meta-object system
 Q_DECLARE_METATYPE(dtracker::audio::SampleManager*)
 
 #endif // SAMPLE_REGISTRY_H

@@ -31,4 +31,18 @@ void SampleRegistry::addSample(const QString &name, std::vector<float> pcm, unsi
     emit sampleAdded(id);
 }
 
+void SampleRegistry::removeSample(int id)
+{
+    if (!m_sampleManager)
+        return;
+
+    if (m_sampleManager->removeSample(id))
+    {
+        qDebug() << "Sample removed from sampleManager";
+        m_model->removeSample(id);
+    }
+
+    emit sampleRemoved(id);
+}
+
 }

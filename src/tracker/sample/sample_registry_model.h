@@ -25,6 +25,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void addSample(int id, const QString &name);
+    void removeSample(int id);
     void clear();
 
 private:

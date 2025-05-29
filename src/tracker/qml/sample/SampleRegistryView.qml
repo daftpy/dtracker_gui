@@ -4,6 +4,7 @@ import dtracker_gui.tracker
 Item {
     id: root
     required property SampleRegistryModel model
+    signal removeSample(int id)
 
     Rectangle {
         anchors.fill: parent
@@ -22,6 +23,10 @@ Item {
 
             delegate: SampleRegistryDelegate {
                 id: delegate
+
+                onRemoveSample: (id) => {
+                    root.removeSample(id);
+                }
             }
         }
     }

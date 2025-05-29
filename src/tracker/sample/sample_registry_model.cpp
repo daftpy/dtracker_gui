@@ -44,6 +44,18 @@ void SampleRegistryModel::addSample(int id, const QString &name)
     endInsertRows();
 }
 
+void SampleRegistryModel::removeSample(int id)
+{
+    for (int row = 0; row < m_entries.size(); ++row) {
+        if (m_entries[row].id == id) {
+            beginRemoveRows(QModelIndex(), row, row);
+            m_entries.erase(m_entries.begin() + row);
+            endRemoveRows();
+            return;
+        }
+    }
+}
+
 void SampleRegistryModel::clear()
 {
     beginResetModel();

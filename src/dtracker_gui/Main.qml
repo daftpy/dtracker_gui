@@ -116,9 +116,14 @@ Window {
                 }
 
                 SampleRegistryView {
+                    id: sampleRegistryView
                     SplitView.preferredHeight: 200
                     SplitView.fillWidth: true
                     model: sampleRegistry.model
+
+                    onRemoveSample: (id) => {
+                        sampleRegistry.removeSample(id);
+                    }
                 }
             }
         }

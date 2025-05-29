@@ -9,6 +9,8 @@ Item {
     // Required propeerties from the model data
     required property int index
     required property string name
+    required property int id
+    signal removeSample(int id)
 
 
     // Takes the full width of the ListView with height determined by content
@@ -94,6 +96,12 @@ Item {
 
                 HoverHandler {
                     id: deleteIconHoverHandler
+                }
+
+                TapHandler {
+                    onSingleTapped: {
+                        root.removeSample(root.id);
+                    }
                 }
             }
         }
