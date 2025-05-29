@@ -8,12 +8,12 @@ qt_add_qml_module(file
     RESOURCES
         "icons/folder.svg"
         "icons/musicnotes.svg"
-        "icons/folderopen.svg"
+        "icons/folder-open.svg"
     SOURCES
         filetreemodel.h filetreemodel.cpp
     QML_FILES
         qml/FileTreeView.qml
-        QML_FILES qml/FileTreeDelegate.qml
+        qml/FileTreeDelegate.qml
 )
 
 target_include_directories(file PUBLIC

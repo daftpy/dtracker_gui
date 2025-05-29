@@ -1,4 +1,5 @@
 #include "decoder.h"
+#include <QFileInfo>
 #include <QDebug>
 #include <QUrl>
 #include <QAudioFormat>
@@ -31,11 +32,13 @@ void Decoder::load(const QString &filePath)
     m_accumulatedSamples.clear();
     m_outputChannels = 0;
     m_sampleRate = 0;
+    m_sampleName = {};
+
+    QFileInfo fileInfo(filePath);
+    m_sampleName = fileInfo.fileName();
 
     // Log file path and decoder format info
     qDebug() << "FileLoader: setSource path:" << filePath;
-    qDebug() << "Decoder format valid:" << m_decoder->audioFormat().isValid();
-    qDebug() << "Decoder format:" << m_decoder->audioFormat();
 
     // Set the source and begin decoding asynchronously
     m_decoder->setSource(QUrl(filePath));
@@ -80,7 +83,13 @@ void Decoder::onFinished()
 {
     // Notify QML that decoding is complete and deliver the final float PCM
     qDebug() << "FileLoader: decoding finished...";
-    emit sampleReady(std::move(m_accumulatedSamples), static_cast<unsigned int>(m_sampleRate));
+
+    // Stops stale onFinished calls from pushing empty samples
+    if (!m_accumulatedSamples.empty()) {
+        emit sampleReady(std::move(m_accumulatedSamples), static_cast<unsigned int>(m_sampleRate), m_sampleName);
+        m_accumulatedSamples.clear();
+        m_sampleName = {};
+    }
 }
 
 } // namespace Dtracker::Audio

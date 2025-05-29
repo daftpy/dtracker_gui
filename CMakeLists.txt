@@ -41,4 +41,5 @@ endif()
 # Add subdirectories for components/modules
 add_subdirectory(src/audio)
 add_subdirectory(src/file)
+add_subdirectory(src/tracker)
 add_subdirectory(src/dtracker_gui)

@@ -15,15 +15,17 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: "#32333d"
+        anchors.bottomMargin: 4
+        color: "#272a2e"
+        radius: 3
 
         TreeView {
             id: fileTreeView
 
             // Set a hard width for now
-            width: parent.width
-            height: parent.height
-
+            anchors.fill: parent
+            anchors.topMargin: 4
+            anchors.bottomMargin: 4
             clip: true
             focus: true // Allows the component to grab focus
 
@@ -91,6 +93,7 @@ Item {
 
                 // Preview file if it's not a directory
                 if (!info.isDir) {
+                    console.log("FileTreeView: Audio file clicked. emit previewSample")
                     root.previewSample(info.path);
                     return;
                 }

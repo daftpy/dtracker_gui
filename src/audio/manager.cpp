@@ -9,8 +9,9 @@ Manager::Manager(QObject *parent)
     // Create DeviceManager using the engine's internal RtAudio instance
     dtracker::audio::DeviceManager dm = m_engine.createDeviceManager();
 
+    m_sampleManager = std::make_unique<dtracker::audio::SampleManager>();
     // Create the PlaybackManager, responsible for routing decoded samples to the engine
-    m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(&m_engine);
+    m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(&m_engine, m_sampleManager.get());
 
     // Attempt to find and set a valid output device
     if (dm.currentDeviceInfo().has_value()) {
@@ -75,6 +76,16 @@ void Manager::playSample(std::vector<float> data, unsigned int rate)
     qDebug() << "Playing sample of size:" << data.size();
 
     m_playbackManager->playSample(std::move(data), rate);
+}
+
+void Manager::playSampleById(int id)
+{
+    m_playbackManager->playSampleById(id);
+}
+
+dtracker::audio::SampleManager *Manager::sampleManager()
+{
+    return m_sampleManager.get();
 }
 
 } // namespace Dtracker::Audio

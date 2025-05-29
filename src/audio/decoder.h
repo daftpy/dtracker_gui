@@ -23,7 +23,7 @@ public:
 
 signals:
     // Emitted when decoding is complete and normalized float PCM data is ready
-    void sampleReady(std::vector<float> pcmData, unsigned int sampleRate);
+    void sampleReady(std::vector<float> pcmData, unsigned int sampleRate, QString sampleName);
 
     // Emitted if decoding fails (unsupported format, etc.)
     void errorOccurred(const QString &message);
@@ -40,6 +40,7 @@ private:
     std::vector<float> m_accumulatedSamples; // Holds float PCM samples
     int m_outputChannels = 0;               // Stores the number of channels
     int m_sampleRate = 0;                   // Needed to pass correct timing to audio playback
+    QString m_sampleName;
 };
 
 } // namespace Dtracker::Audio

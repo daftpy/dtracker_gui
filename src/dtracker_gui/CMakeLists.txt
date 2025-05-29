@@ -25,6 +25,7 @@ target_link_libraries(appdtracker_gui
     PRIVATE dtracker_engine    # Your audio engine library
     PRIVATE audioplugin        # AudioManager QML plugin (from src/audio)
     PRIVATE fileplugin
+    PRIVATE trackerplugin
 )
 
 # Set platform properties

@@ -18,12 +18,12 @@ TreeViewDelegate {
         id: directoryIcon
 
         // Indent based on tree depth
-        x: delegate.leftMargin + (delegate.depth * delegate.indentation)
+        x: delegate.leftMargin + (delegate.depth * delegate.indentation) + 2
         anchors.verticalCenter: parent.verticalCenter
 
         // Show folder icons for directories, or a music note for files
         source: delegate.hasChildren ? (delegate.expanded
-                    ? "../icons/folderopen.svg" : "../icons/folder.svg")
+                    ? "../icons/folder-open.svg" : "../icons/folder.svg")
                 : "../icons/musicnotes.svg"
 
         sourceSize.width: 16
@@ -39,8 +39,7 @@ TreeViewDelegate {
     contentItem: Row {
         width: parent.implicitWidth
         spacing: 4
-        topPadding: 2
-        bottomPadding: 2
+        padding: 2
 
         // Secondary icon for files, hidden for folders (since folders already use the indicator)
         Image {
@@ -49,8 +48,8 @@ TreeViewDelegate {
                         ? "../icons/folder.svg" : "../icons/folder.svg")
                     : "../icons/musicnotes.svg"
             visible: delegate.hasChildren ? false : true
-            sourceSize.width: 12
-            sourceSize.height: 12
+            sourceSize.width: 14
+            sourceSize.height: 14
             anchors.verticalCenter: parent.verticalCenter
         }
 
@@ -66,8 +65,8 @@ TreeViewDelegate {
 
     // Background changes color on hover or selection
     background: Rectangle {
-        color: (delegate.index === fileTreeView.lastIndex) ? "#464963"
-            : ((fileTreeView.hoveredIndex == delegate.index) ? "#292b3b" : "#32333d")
+        color: (fileTreeView.hoveredIndex === delegate.index) ? "#1c6bd4"
+            : ((delegate.index === fileTreeView.lastIndex) ? "#333940" : "transparent")
     }
 
     // Handle hover state to update hoveredIndex for consistent visuals
@@ -104,6 +103,7 @@ TreeViewDelegate {
 
             // Emit preview signal for files only
             if (!delegate.hasChildren) {
+                console.log("FileTreeView: Audio file clicked. emit previewSample")
                 root.previewSample(path);
             }
 

@@ -8,6 +8,7 @@
 #include "types/deviceinfo.h"
 #include <dtracker/audio/engine.hpp>
 #include <dtracker/audio/playback_manager.hpp>
+#include <dtracker/audio/sample_manager.hpp>
 
 namespace Dtracker::Audio {
 
@@ -31,6 +32,8 @@ public:
     Q_INVOKABLE void startSin();                 // Play a test tone
     Q_INVOKABLE void stopSin();                  // Stop tone playback
     Q_INVOKABLE void playSample(std::vector<float> data, unsigned int rate); // Play decoded sample
+    Q_INVOKABLE void playSampleById(int id);
+    Q_INVOKABLE dtracker::audio::SampleManager* sampleManager();
 
 signals:
     // Notifies QML when device info becomes available
@@ -39,6 +42,8 @@ signals:
 private:
     dtracker::audio::Engine m_engine; // Core audio engine (wraps RtAudio)
     std::optional<Types::DeviceInfo> m_currentDeviceInfo; // Cached output device info
+
+    std::unique_ptr<dtracker::audio::SampleManager> m_sampleManager;
     std::unique_ptr<dtracker::audio::PlaybackManager> m_playbackManager; // Manages active playback units
 };
 
