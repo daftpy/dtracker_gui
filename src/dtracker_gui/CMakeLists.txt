@@ -7,6 +7,8 @@ qt_add_executable(appdtracker_gui
 qt_add_qml_module(appdtracker_gui
     URI dtracker_gui            # QML import URI
     VERSION 1.0                 # QML module version
+    RESOURCES
+        "../tracker/icons/plus-square-fill-atlas.svg"
     QML_FILES
         Main.qml               # Main entry point of the QML UI
 )

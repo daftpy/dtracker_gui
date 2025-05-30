@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="48" viewBox="0 0 1024 256">
+    <defs>
+        <g id="playFillIconShape">
+            <path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"></path>
+        </g>
+    </defs>
+
+    <use href="#playFillIconShape" fill="#cad3de" x="0" y="0" />
+
+    <use href="#playFillIconShape" fill="#007bff" x="256" y="0" />
+    <!--
+        Alternatively, using transform:
+        <use href="#folderIconShape" fill="#007bff" transform="translate(256, 0)" />
+    -->
+
+    <use href="#playFillIconShape" fill="#28a745" x="512" y="0" />
+    <!--
+        Alternatively, using transform:
+        <use href="#folderIconShape" fill="#28a745" transform="translate(512, 0)" />
+    -->
+
+    <use href="#playFillIconShape" fill="#dc3545" x="768" y="0" />
+    <!--
+        Alternatively, using transform:
+        <use href="#folderIconShape" fill="#dc3545" transform="translate(768, 0)" />
+    -->
+</svg>

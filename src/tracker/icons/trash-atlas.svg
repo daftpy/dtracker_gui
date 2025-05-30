@@ -5,25 +5,7 @@
         </g>
     </defs>
 
-    <use href="#trashIconShape" fill="#718191" x="0" y="0" />
-
-    <use href="#trashIconShape" fill="#007bff" x="256" y="0" />
-    <!--
-        Alternatively, using transform:
-        <use href="#folderIconShape" fill="#007bff" transform="translate(256, 0)" />
-    -->
-
-    <use href="#trashIconShape" fill="#28a745" x="512" y="0" />
-    <!--
-        Alternatively, using transform:
-        <use href="#folderIconShape" fill="#28a745" transform="translate(512, 0)" />
-    -->
-
-    <use href="#trashIconShape" fill="#dc3545" x="768" y="0" />
-    <!--
-        Alternatively, using transform:
-        <use href="#folderIconShape" fill="#dc3545" transform="translate(768, 0)" />
-    -->    <use href="#trashIconShape" fill="#718191" x="0" y="0" />
+    <use href="#trashIconShape" fill="#cad3de" x="0" y="0" />
 
     <use href="#trashIconShape" fill="#007bff" x="256" y="0" />
     <!--

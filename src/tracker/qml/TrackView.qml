@@ -30,7 +30,7 @@ Item {
                     anchors.fill: parent
                     anchors.margins: 8
                     anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: 4
+                    spacing: 5
 
                     Image {
                         id: muteIcon
@@ -93,6 +93,7 @@ Item {
                         text: root.name
                         color: "#eeeeee"
                         font.weight: 600
+                        font.pointSize: 10
                     }
                 }
             }

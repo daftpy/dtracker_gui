@@ -58,7 +58,7 @@ Item {
 
                     // Style rules
                     textFormat: Text.RichText // Allows HTML
-                    text: "<strong><tt>" + index + "</tt></strong>" // <tt> for monospace
+                    text: "<strong><tt>" + root.id + "</tt></strong>" // <tt> for monospace
                     color: "#1a1c1b"
                 }
             }
