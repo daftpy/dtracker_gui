@@ -41,6 +41,16 @@ Track* TrackManager::createTrack(float volume, float pan)
     return track;
 }
 
+bool TrackManager::addSamplesToTrack(int trackId, const QList<int> &sampleIds)
+{
+    if (!m_backend)
+        return false;
+
+    // Convert QList to std::vector
+    std::vector<int> ids(sampleIds.begin(), sampleIds.end());
+    return m_backend->addSamplesToTrack(trackId, ids);
+}
+
 // Getter for backend TrackManager (engine-side)
 dtracker::tracker::TrackManager* TrackManager::trackManager() const
 {

@@ -10,6 +10,7 @@ Item {
     required property int index
     required property string name
     required property int id
+    signal addSampleToTrack(int id)
     signal removeSample(int id)
 
 
@@ -124,6 +125,13 @@ Item {
         HoverHandler {
             id: delegateHoverHandler
             cursorShape: Qt.PointingHandCursor
+        }
+        TapHandler {
+            id: listViewTapHandler
+
+            onSingleTapped: {
+                root.addSampleToTrack(root.id);
+            }
         }
     }
     Connections {

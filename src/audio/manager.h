@@ -35,6 +35,8 @@ public:
     Q_INVOKABLE void stopSin();                  // Stop tone playback
     Q_INVOKABLE void playSample(std::vector<float> data, unsigned int rate); // Play decoded sample
     Q_INVOKABLE void playSampleById(int id);
+    Q_INVOKABLE void addSampleToTrack(int sampleId, int trackId);
+    Q_INVOKABLE void playTrack();
     Q_INVOKABLE dtracker::audio::SampleManager* sampleManager();
     dtracker::tracker::TrackManager* trackManager();
 

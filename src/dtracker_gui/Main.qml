@@ -128,7 +128,7 @@ Window {
 
                         TapHandler {
                             onSingleTapped: {
-                                trackManager.createTrack();
+                                audioManager.playTrack();
                             }
                         }
                     }
@@ -279,6 +279,11 @@ Window {
                         SplitView.preferredHeight: 200
                         SplitView.fillWidth: true
                         model: sampleRegistry.model
+
+                        onAddSampleToTrack: (sampleId) => {
+                            console.log("Adding sample to track 0");
+                            audioManager.addSampleToTrack(sampleId, 0);
+                        }
 
                         onRemoveSample: (id) => {
                             sampleRegistry.removeSample(id);

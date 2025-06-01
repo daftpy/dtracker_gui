@@ -29,6 +29,9 @@ public:
     // Creates a new Track instance (Qt side) and corresponding backend track
     Q_INVOKABLE Track* createTrack(float volume = 1.0f, float pan = 0.0f);
 
+    // Adds sample(s) to an existing track by ID from QML
+    Q_INVOKABLE bool addSamplesToTrack(int trackId, const QList<int>& sampleIds);
+
     // Returns pointer to the current engine-side TrackManager
     dtracker::tracker::TrackManager* trackManager() const;
 

@@ -5,6 +5,7 @@ Item {
     id: root
     required property SampleRegistryModel model
     signal removeSample(int id)
+    signal addSampleToTrack(int id)
 
     Rectangle {
         anchors.fill: parent
@@ -26,6 +27,10 @@ Item {
 
                 onRemoveSample: (id) => {
                     root.removeSample(id);
+                }
+
+                onAddSampleToTrack: (id) => {
+                    root.addSampleToTrack(id);
                 }
             }
         }

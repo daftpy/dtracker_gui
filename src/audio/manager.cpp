@@ -88,6 +88,31 @@ void Manager::playSampleById(int id)
     m_playbackManager->playSampleById(id);
 }
 
+void Manager::addSampleToTrack(int sampleId, int trackId)
+{
+    if (!m_trackManager)
+        return;
+
+    // Wrap the sampleId in a vector since addSamplesToTrack expects a list
+    std::vector<int> sampleIds = {sampleId};
+    bool success = m_trackManager->addSamplesToTrack(0, sampleIds);
+
+    if (!success) {
+        qDebug() << "Failed to add sample" << sampleId << "to track" << 0;
+    }
+}
+
+void Manager::playTrack()
+{
+    auto* track = m_trackManager->getTrack(0);
+    if (track) {
+        qDebug() << "track found";
+        m_engine.mixerUnit()->clear();   // Remove any leftover units
+        track->reset();                  // Restart the track
+        m_engine.mixerUnit()->addUnit(track); // Add again
+    }
+}
+
 dtracker::audio::SampleManager *Manager::sampleManager()
 {
     return m_sampleManager.get();
