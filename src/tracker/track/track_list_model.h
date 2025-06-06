@@ -18,11 +18,12 @@ public:
     explicit TrackListModel(QObject *parent = nullptr);
 
     enum TrackRoles {
-        IdRole = Qt::UserRole + 1,   // Unique track ID
+        TrackIdRole = Qt::UserRole + 1,   // Unique track ID
         NameRole,                    // Track name
         VolumeRole,                  // Track volume
         PanRole,                     // Track pan
-        SampleIdsRole                // List of sample IDs assigned to this track
+        SampleIdsRole,               // List of sample IDs assigned to this track
+        TrackObjectRole
     };
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

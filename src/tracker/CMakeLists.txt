@@ -13,8 +13,10 @@ qt_add_qml_module(tracker
         "icons/pause-fill-atlas.svg"
     QML_FILES
         qml/TrackView.qml
+        qml/PlaybackTimer.qml
         qml/sample/SampleRegistryView.qml
         qml/sample/SampleRegistryDelegate.qml
+        qml/pattern/PatternColumn.qml
     SOURCES
         track/track_list_model.h track/track_list_model.cpp
         track/track.h track/track.cpp
@@ -23,12 +25,14 @@ qt_add_qml_module(tracker
         sample/sample_entry.h
         sample/sample_registry.h sample/sample_registry.cpp
         types/track_config.h types/track_config.cpp
+        pattern/pattern_step_model.h pattern/pattern_step_model.cpp
 )
 
 target_include_directories(tracker PUBLIC
     ${dtracker_engine_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/sample
     ${CMAKE_CURRENT_SOURCE_DIR}/track
+    ${CMAKE_CURRENT_SOURCE_DIR}/pattern
 )
 
 target_link_libraries(tracker

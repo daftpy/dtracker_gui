@@ -1,12 +1,14 @@
 import QtQuick
 import QtQuick.Layouts
+import dtracker_gui.tracker
 
 Item {
     id: root
     width: 200
     height: ListView.view.height
     required property string name
-    required property int id
+    required property int trackId
+    required property Track track
     signal playSample(int id)
 
     Rectangle {
@@ -18,12 +20,14 @@ Item {
         border.width: 1
         radius: 6
 
-        Column {
+        ColumnLayout {
             anchors.fill: parent
             anchors.margins: 8
             Rectangle {
-                width: parent.width
-                height: trackTitle.implicitHeight + 12
+                // width: parent.width
+                // height: trackTitle.implicitHeight + 12
+                Layout.fillWidth: true
+                Layout.preferredHeight: trackTitle.implicitHeight + 12
                 color: "#191d21"
                 radius: 3
                 Row {
@@ -75,7 +79,7 @@ Item {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
                             onPressed: {
-                                root.playSample(root.id);
+                                root.playSample(root.trackId);
                             }
                         }
 
@@ -96,6 +100,13 @@ Item {
                         font.pointSize: 10
                     }
                 }
+            }
+            PatternColumn {
+                id: patternColumn
+                model: root.track.patternModel
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
             }
         }
     }

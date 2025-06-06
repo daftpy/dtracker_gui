@@ -117,7 +117,7 @@ Window {
                         sourceSize.width: 96
                         sourceSize.height: 24
                         // Use a clip to only show a section of the atlas
-                        sourceClipRect: playTrackIconHoverHandler.hovered ? hovered : inactive
+                        sourceClipRect: playbackTimer.running ? hovered : playTrackIconHoverHandler.hovered ? hovered : inactive
                         antialiasing: true
 
                         HoverHandler {
@@ -127,8 +127,15 @@ Window {
                         }
 
                         TapHandler {
+                            // onSingleTapped: {
+                            //     audioManager.playTrack();
+                            // }
                             onSingleTapped: {
-                                audioManager.playTrack();
+                                let track = trackManager.model.get(0);
+                                if (track && track.patternModel) {
+                                    playbackTimer.patternModel = track.patternModel;
+                                    playbackTimer.start();
+                                }
                             }
                         }
                     }
@@ -158,7 +165,7 @@ Window {
 
                         TapHandler {
                             onSingleTapped: {
-                                trackManager.createTrack();
+                                playbackTimer.stop();
                             }
                         }
                     }
@@ -330,6 +337,12 @@ Window {
                 }
             }
         }
+    }
+
+    PlaybackTimer {
+        id: playbackTimer
+
+        audioManager: audioManager
     }
 
     // Hidden file picker dialog

@@ -23,7 +23,7 @@ QVariant TrackListModel::data(const QModelIndex &index, int role) const
     const Track* track = m_tracks.at(index.row());
 
     switch (role) {
-    case IdRole:
+    case TrackIdRole:
         return track->id();
     case NameRole:
         return track->name();
@@ -33,6 +33,8 @@ QVariant TrackListModel::data(const QModelIndex &index, int role) const
         return track->pan();
     case SampleIdsRole:
         return QVariant::fromValue(track->sampleIds());
+    case TrackObjectRole:
+        return QVariant::fromValue(track);
     default:
         return QVariant(); // Unknown role
     }
@@ -41,11 +43,12 @@ QVariant TrackListModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> TrackListModel::roleNames() const
 {
     return {
-        {IdRole, "id"},
+        {TrackIdRole, "trackId"},
         {NameRole, "name"},
         {VolumeRole, "volume"},
         {PanRole, "pan"},
-        {SampleIdsRole, "sampleIds"}
+        {SampleIdsRole, "sampleIds"},
+        {TrackObjectRole, "track"}
     };
 }
 

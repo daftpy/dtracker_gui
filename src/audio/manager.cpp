@@ -109,7 +109,7 @@ void Manager::playTrack()
         qDebug() << "track found";
         m_engine.mixerUnit()->clear();   // Remove any leftover units
         track->reset();                  // Restart the track
-        m_engine.mixerUnit()->addUnit(track); // Add again
+        // m_engine.mixerUnit()->addUnit(track); // Add again
     }
 }
 

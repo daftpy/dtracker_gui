@@ -5,6 +5,13 @@ namespace Dtracker::Tracker {
 Track::Track(const TrackConfig& config, QObject* parent)
     : QObject(parent), m_config(config)
 {
+    connect(m_patternModel, &PatternStepModel::stepSet, this,
+        [this](int index, int sampleId) {
+            if (sampleId >= 0 && !m_config.m_sampleIds.contains(sampleId)) {
+                m_config.m_sampleIds.append(sampleId);
+                emit sampleIdsChanged();
+            }
+        });
 }
 
 int Track::id() const
@@ -35,6 +42,11 @@ float Track::pan() const
 void Track::setPan(float p)
 {
     m_config.pan = p;
+}
+
+PatternStepModel *Track::patternModel()
+{
+    return m_patternModel;
 }
 
 QList<int> Track::sampleIds() const

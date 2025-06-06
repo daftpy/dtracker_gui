@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QList>
+#include "pattern/pattern_step_model.h"
 #include "types/track_config.h"
 #include <QQmlEngine>
 #include <QtQmlIntegration/qqmlintegration.h>
@@ -18,7 +19,7 @@ class Track : public QObject
     QML_ELEMENT
 
     // Read-only track ID
-    Q_PROPERTY(int id READ id CONSTANT)
+    Q_PROPERTY(int trackId READ id CONSTANT)
 
     // Editable track name
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
@@ -31,6 +32,8 @@ class Track : public QObject
 
     // List of sample IDs this track should trigger
     Q_PROPERTY(QList<int> sampleIds READ sampleIds WRITE setSampleIds NOTIFY sampleIdsChanged)
+
+    Q_PROPERTY(PatternStepModel* patternModel READ patternModel CONSTANT)
 
 public:
     explicit Track(const TrackConfig& config, QObject* parent = nullptr);
@@ -50,6 +53,8 @@ public:
     float pan() const;
     void setPan(float p);
 
+    PatternStepModel* patternModel();
+
     // Sample ID list accessors
     QList<int> sampleIds() const;
     void setSampleIds(const QList<int>& ids);
@@ -65,6 +70,7 @@ signals:
 
 private:
     TrackConfig m_config;
+    PatternStepModel* m_patternModel{new PatternStepModel(this)};
 };
 
 } // namespace Dtracker::Tracker
