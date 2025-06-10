@@ -1,5 +1,5 @@
 #include "decoder.h"
-#include <QFileInfo>
+
 #include <QDebug>
 #include <QUrl>
 #include <QAudioFormat>
@@ -26,16 +26,24 @@ Decoder::Decoder(QObject *parent)
     qDebug() << "QT_MEDIA_BACKEND:" << qgetenv("QT_MEDIA_BACKEND");
 }
 
-void Decoder::load(const QString &filePath)
+void Decoder::startDecodingFile(const QString &filePath)
 {
+    // If the decoder is actively working, queue the job
+    if (m_decoder->isDecoding())
+    {
+        qDebug() << "Decoder busy, queuing next job";
+        m_nextJob = QFileInfo(filePath);
+        return;
+    }
+
     // Clear any previously decoded samples
     m_accumulatedSamples.clear();
     m_outputChannels = 0;
     m_sampleRate = 0;
-    m_sampleName = {};
+    m_fileInfo = QFileInfo();
 
-    QFileInfo fileInfo(filePath);
-    m_sampleName = fileInfo.fileName();
+    // Set the file info
+    m_fileInfo = QFileInfo(filePath);
 
     // Log file path and decoder format info
     qDebug() << "FileLoader: setSource path:" << filePath;
@@ -62,11 +70,13 @@ void Decoder::onBufferReady()
 
     // ---- CASE 1: Handle 32-bit float PCM data ----
     if (buffer.format().sampleFormat() == QAudioFormat::Float) {
+        m_sampleBitDepth = 32;
         const float *data = buffer.constData<float>(); // Already normalized
         m_accumulatedSamples.insert(m_accumulatedSamples.end(), data, data + sampleCount);
 
     // ---- CASE 2: Handle 16-bit signed integer PCM data ----
     } else if (buffer.format().sampleFormat() == QAudioFormat::Int16) {
+        m_sampleBitDepth = 16;
         const qint16 *data = buffer.constData<qint16>();
         for (int i = 0; i < sampleCount; ++i)
             m_accumulatedSamples.push_back(static_cast<float>(data[i]) / 32768.0f); // Normalize
@@ -86,9 +96,19 @@ void Decoder::onFinished()
 
     // Stops stale onFinished calls from pushing empty samples
     if (!m_accumulatedSamples.empty()) {
-        emit sampleReady(std::move(m_accumulatedSamples), static_cast<unsigned int>(m_sampleRate), m_sampleName);
+        emit sampleReady(std::move(m_accumulatedSamples), static_cast<unsigned int>(m_sampleRate), m_sampleBitDepth, m_fileInfo);
         m_accumulatedSamples.clear();
-        m_sampleName = {};
+        m_sampleBitDepth = 0;
+        m_fileInfo = QFileInfo();
+
+        // If a queued job exists, run it
+        if (m_nextJob.exists())
+        {
+            QFileInfo next = m_nextJob;
+            m_nextJob = QFileInfo();
+            qDebug() << "Decoder: starting next queued job";
+            startDecodingFile(next.filePath());
+        }
     }
 }
 

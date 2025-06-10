@@ -2,8 +2,7 @@
 #define DECODER_H
 
 #include <QObject>
-#include <QQmlEngine>
-#include <QtQmlIntegration/qqmlintegration.h>
+#include <QFileInfo>
 #include <QAudioDecoder>
 #include <QAudioBuffer>
 #include <vector>
@@ -13,17 +12,16 @@ namespace Dtracker::Audio {
 class Decoder : public QObject
 {
     Q_OBJECT
-    QML_NAMED_ELEMENT(AudioDecoder)
 
 public:
     explicit Decoder(QObject *parent = nullptr);
 
     // Begin decoding the audio file at the given path
-    Q_INVOKABLE void load(const QString &filePath);
+    void startDecodingFile(const QString &filePath);
 
 signals:
     // Emitted when decoding is complete and normalized float PCM data is ready
-    void sampleReady(std::vector<float> pcmData, unsigned int sampleRate, QString sampleName);
+    void sampleReady(std::vector<float> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo);
 
     // Emitted if decoding fails (unsupported format, etc.)
     void errorOccurred(const QString &message);
@@ -36,11 +34,14 @@ private slots:
     void onFinished();
 
 private:
-    QAudioDecoder *m_decoder;               // Decoding engine
-    std::vector<float> m_accumulatedSamples; // Holds float PCM samples
-    int m_outputChannels = 0;               // Stores the number of channels
-    int m_sampleRate = 0;                   // Needed to pass correct timing to audio playback
-    QString m_sampleName;
+    QAudioDecoder *m_decoder;                   // Decoding engine
+    std::vector<float> m_accumulatedSamples;    // Holds float PCM samples
+    int m_outputChannels = 0;                   // Stores the channel count of the current audio file
+    unsigned int m_sampleRate = 0;              // Stores the sample rate of the current audio file
+    unsigned int m_sampleBitDepth = 0;          // Stores the bit depth of the current audio file
+    QFileInfo m_fileInfo;                       // Information on the file being decoded
+
+    QFileInfo m_nextJob;                        // Holds the next decoding job
 };
 
 } // namespace Dtracker::Audio

@@ -47,22 +47,6 @@ Window {
         */
     }
 
-    // Responsible for decoding audio samples
-    // Passes samples to the SampleRegistry for registration in backend
-    AudioDecoder {
-        id: fileLoader
-
-        onSampleReady: (pcmData, sampleRate, sampleName) => {
-            console.log("Adding sample", sampleName);
-            // audioManager.playSample(pcmData, sampleRate)
-            sampleRegistry.addSample(sampleName, pcmData, sampleRate);
-        }
-
-        onErrorOccurred: (error) => {
-            console.log(error);
-        }
-    }
-
     // Registers samples in the backend and an internal list for exposure to QML
     SampleRegistry {
         id: sampleRegistry
@@ -276,7 +260,8 @@ Window {
                         SplitView.fillWidth: true
                         SplitView.preferredHeight: 200
                         onPreviewSample: (path) => {
-                            fileLoader.load(path);
+                            // fileLoader.load(path);
+                            audioManager.startDecoding(path);
                         }
                     }
 
@@ -351,7 +336,7 @@ Window {
 
         onFileSelected: (path) => {
             console.log(`Calling fileLoader.load(${path})`)
-            fileLoader.load(path);
+            // fileLoader.load(path);
         }
     }
     }

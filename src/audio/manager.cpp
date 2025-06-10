@@ -1,11 +1,15 @@
 #include "manager.h"
 #include <QDebug>
+#include <QThread>
+#include <dtracker/sample/types.hpp>
 
 namespace Dtracker::Audio {
 
 Manager::Manager(QObject *parent)
     : QObject{parent}
 {
+    m_workerThread = new QThread(this);
+
     // Create DeviceManager using the engine's internal RtAudio instance
     dtracker::audio::DeviceManager dm = m_engine.createDeviceManager();
 
@@ -31,6 +35,31 @@ Manager::Manager(QObject *parent)
         }
     } else {
         qDebug() << "AudioEngine failed to start due to no usable audio device";
+    }
+
+    m_audioDecoder = new Dtracker::Audio::Decoder();
+
+    m_audioDecoder->moveToThread(m_workerThread);
+
+    // --- Connect signals and slots ---
+    connect(m_workerThread, &QThread::finished, m_audioDecoder, &QObject::deleteLater);
+    connect(this, &Manager::startDecodingFile, m_audioDecoder, &Dtracker::Audio::Decoder::startDecodingFile);
+    connect(m_audioDecoder, &Dtracker::Audio::Decoder::sampleReady, this, &Manager::onDecodingFinished);
+
+    m_workerThread->start();
+}
+
+Manager::~Manager()
+{
+    m_workerThread->quit();
+
+    // A short timeout is added as a safeguard in case the thread is stuck
+    if (!m_workerThread->wait(3000)) // Wait for up to 3 seconds
+    {
+        // If the thread did not shut down gracefully, forcefully terminate it
+        qDebug() << "Warning: Worker thread did not shut down in time. Forcing termination.";
+        m_workerThread->terminate();
+        m_workerThread->wait(); // Wait for the termination to complete.
     }
 }
 
@@ -121,6 +150,22 @@ dtracker::audio::SampleManager *Manager::sampleManager()
 dtracker::tracker::TrackManager *Manager::trackManager()
 {
     return m_trackManager.get();
+}
+
+void Manager::startDecoding(const QString& filePath)
+{
+    qDebug() << "Starting decoding process";
+    emit startDecodingFile(filePath);
+}
+
+void Manager::onDecodingFinished(std::vector<float> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo)
+{
+    qDebug() << "Finished decoding file " << fileInfo.absoluteFilePath();
+    dtracker::sample::types::SampleMetadata meta;
+    meta.sourceSampleRate = sampleRate;
+    meta.bitDepth = sampleBitDepth;
+    auto id = m_newSampleManager.addSample(fileInfo.absoluteFilePath().toStdString(), pcmData, meta);
+    qDebug() << "Sample addedd, returned id:" << id;
 }
 
 } // namespace Dtracker::Audio

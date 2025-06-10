@@ -3,13 +3,17 @@
 
 #include <QObject>
 #include <QQmlEngine>
+#include <QThread>
 #include <QtQmlIntegration/qqmlintegration.h>
 #include <optional>
+#include <QFileInfo>
 #include "types/deviceinfo.h"
+#include "decoder.h"
 #include <dtracker/audio/engine.hpp>
 #include <dtracker/audio/playback_manager.hpp>
 #include <dtracker/audio/sample_manager.hpp>
 #include <dtracker/tracker/track_manager.hpp>
+#include <dtracker/sample/manager.hpp>
 
 namespace Dtracker::Audio {
 
@@ -25,6 +29,7 @@ class Manager : public QObject
 
 public:
     explicit Manager(QObject *parent = nullptr);
+    ~Manager();
 
     bool hasDeviceInfo() const;
     Types::DeviceInfo deviceInfo() const;
@@ -40,10 +45,17 @@ public:
     Q_INVOKABLE dtracker::audio::SampleManager* sampleManager();
     dtracker::tracker::TrackManager* trackManager();
 
+    Q_INVOKABLE void startDecoding(const QString& filePath);
+
 signals:
     // Notifies QML when device info becomes available
     void deviceInfoChanged();
     void trackManagerChanged();
+
+    void startDecodingFile(const QString& filePath);
+
+private slots:
+    void onDecodingFinished(std::vector<float> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo);
 
 private:
     dtracker::audio::Engine m_engine; // Core audio engine (wraps RtAudio)
@@ -52,6 +64,10 @@ private:
     std::unique_ptr<dtracker::audio::SampleManager> m_sampleManager;
     std::unique_ptr<dtracker::audio::PlaybackManager> m_playbackManager; // Manages active playback units
     std::unique_ptr<dtracker::tracker::TrackManager> m_trackManager;
+
+    dtracker::sample::Manager m_newSampleManager;
+    QThread* m_workerThread;
+    Decoder* m_audioDecoder;
 };
 
 } // namespace Dtracker::Audio
