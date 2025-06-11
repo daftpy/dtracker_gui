@@ -46,6 +46,7 @@ public:
     dtracker::tracker::TrackManager* trackManager();
 
     Q_INVOKABLE void startDecoding(const QString& filePath);
+    Q_INVOKABLE void previewSample(const QString& filePath);
 
 signals:
     // Notifies QML when device info becomes available

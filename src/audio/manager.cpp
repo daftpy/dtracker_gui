@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QThread>
 #include <dtracker/sample/types.hpp>
+#include <dtracker/audio/playback/sample_playback_unit.hpp>
 
 namespace Dtracker::Audio {
 
@@ -158,14 +159,42 @@ void Manager::startDecoding(const QString& filePath)
     emit startDecodingFile(filePath);
 }
 
+void Manager::previewSample(const QString &filePath)
+{
+    // TODO: implement
+}
+
 void Manager::onDecodingFinished(std::vector<float> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo)
 {
+    // qDebug() << "Finished decoding file " << fileInfo.absoluteFilePath();
+    // dtracker::sample::types::SampleMetadata meta;
+    // meta.sourceSampleRate = sampleRate;
+    // meta.bitDepth = sampleBitDepth;
+    // auto id = m_newSampleManager.addSample(fileInfo.absoluteFilePath().toStdString(), pcmData, meta);
+    // qDebug() << "Sample addedd, returned id:" << id;
+
     qDebug() << "Finished decoding file " << fileInfo.absoluteFilePath();
+
+    // 1. Create the SampleMetadata
     dtracker::sample::types::SampleMetadata meta;
     meta.sourceSampleRate = sampleRate;
     meta.bitDepth = sampleBitDepth;
-    auto id = m_newSampleManager.addSample(fileInfo.absoluteFilePath().toStdString(), pcmData, meta);
-    qDebug() << "Sample addedd, returned id:" << id;
+
+    // 2. Cache the PCM data and metadata in the sample manager
+    int id = m_newSampleManager.addSample(fileInfo.absoluteFilePath().toStdString(), std::move(pcmData), meta);
+    qDebug() << "Sample added, returned id:" << id;
+
+    // 3. Retrieve the descriptor
+    auto descriptorOpt = m_newSampleManager.getSample(id);
+    if (!descriptorOpt.has_value()) {
+        qWarning() << "Failed to retrieve descriptor for sample ID:" << id;
+        return;
+    }
+
+    // 4. Create the playback unit using the helper
+    auto unit = dtracker::audio::playback::makePlaybackUnit(descriptorOpt.value());
+
+    m_engine.mixerUnit()->addUnit(std::move(unit));
 }
 
 } // namespace Dtracker::Audio
