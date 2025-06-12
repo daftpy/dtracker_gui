@@ -103,21 +103,6 @@ void Manager::stopSin()
     }
 }
 
-// Called when a decoded audio sample is ready
-// Forwards it to the playback manager for streaming via RtAudio
-void Manager::playSample(std::vector<float> data, unsigned int rate)
-{
-    qDebug() << "calling dtracker_engine::audio::PlaybackManager playSample";
-    qDebug() << "Playing sample of size:" << data.size();
-
-    m_playbackManager->playSample(std::move(data), rate);
-}
-
-void Manager::playSampleById(int id)
-{
-    m_playbackManager->playSampleById(id);
-}
-
 void Manager::addSampleToTrack(int sampleId, int trackId)
 {
     if (!m_trackManager)
@@ -159,20 +144,8 @@ void Manager::startDecoding(const QString& filePath)
     emit startDecodingFile(filePath);
 }
 
-void Manager::previewSample(const QString &filePath)
-{
-    // TODO: implement
-}
-
 void Manager::onDecodingFinished(std::vector<float> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo)
 {
-    // qDebug() << "Finished decoding file " << fileInfo.absoluteFilePath();
-    // dtracker::sample::types::SampleMetadata meta;
-    // meta.sourceSampleRate = sampleRate;
-    // meta.bitDepth = sampleBitDepth;
-    // auto id = m_newSampleManager.addSample(fileInfo.absoluteFilePath().toStdString(), pcmData, meta);
-    // qDebug() << "Sample addedd, returned id:" << id;
-
     qDebug() << "Finished decoding file " << fileInfo.absoluteFilePath();
 
     // 1. Create the SampleMetadata
@@ -180,36 +153,33 @@ void Manager::onDecodingFinished(std::vector<float> pcmData, unsigned int sample
     meta.sourceSampleRate = sampleRate;
     meta.bitDepth = sampleBitDepth;
 
-    // // 2. Cache the PCM data and metadata in the sample manager
-    // int id = m_newSampleManager.addSample(fileInfo.absoluteFilePath().toStdString(), std::move(pcmData), meta);
-    // qDebug() << "Sample added, returned id:" << id;
-
-    // // 3. Retrieve the descriptor
-    // auto descriptorOpt = m_newSampleManager.getSample(id);
-    // if (!descriptorOpt.has_value()) {
-    //     qWarning() << "Failed to retrieve descriptor for sample ID:" << id;
-    //     return;
-    // }
-
+    // 2. Create the descriptor
     dtracker::sample::types::SampleDescriptor descriptor(-1, std::make_shared<const dtracker::audio::types::PCMData>(pcmData), meta);
 
-    // 4. Create the playback unit using the helper
+    // 3. Create the playback unit using the helper
     auto unit = dtracker::audio::playback::makePlaybackUnit(descriptor);
 
+    // 4. Move the unit to the mixer (preview)
     m_engine.mixerUnit()->addUnit(std::move(unit));
+
+    // Emit the file has been decoded with the pcm and meta data
     emit fileDecoded(fileInfo.absoluteFilePath(), std::move(pcmData), meta);
 }
 
 void Manager::previewPCMData(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, dtracker::audio::types::AudioProperties properties)
 {
+    // 1. Create the meta data
     dtracker::sample::types::SampleMetadata meta;
     meta.sourceSampleRate = properties.sampleRate;
     meta.bitDepth = properties.bitDepth;
 
+    // 2. Create the descriptor
     dtracker::sample::types::SampleDescriptor descriptor(-1, std::move(pcmData), meta);
-    // 4. Create the playback unit using the helper
+
+    // 3. Create the playback unit using the helper
     auto unit = dtracker::audio::playback::makePlaybackUnit(descriptor);
 
+    // 4. Move the unit to the mixer (preview)
     m_engine.mixerUnit()->addUnit(std::move(unit));
 }
 

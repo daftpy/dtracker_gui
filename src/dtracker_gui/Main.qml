@@ -280,7 +280,7 @@ Window {
 
                         onAddSampleToTrack: (sampleId) => {
                             console.log("Adding sample to track 0");
-                            audioManager.addSampleToTrack(sampleId, 0);
+                            // audioManager.addSampleToTrack(sampleId, 0);
                         }
 
                         onRemoveSample: (id) => {
