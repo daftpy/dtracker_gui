@@ -8,6 +8,7 @@ import dtracker_gui.file
 Item {
     id: root
     signal previewSample(path : string)
+    signal addSample(path : string)
 
     FileTreeModel {
         id: fileModel
@@ -45,6 +46,13 @@ Item {
 
             delegate: FileTreeDelegate {
                 id: delegate
+
+                onFileClicked: (path) => {
+                    console.log("Delegate emitted fileClicked for path:", path)
+                    root.previewSample(path)
+                }
+
+                onFileControlClicked: (path) => root.addSample(path);
             }
 
             // If the mouse leaves the tree, reset hoverstate

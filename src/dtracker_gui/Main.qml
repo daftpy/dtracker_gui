@@ -267,7 +267,11 @@ Window {
                         SplitView.fillWidth: true
                         SplitView.preferredHeight: 200
                         onPreviewSample: (path) => {
-                            sampleFacade.checkCache(path);
+                            sampleFacade.previewSample(path);
+                        }
+
+                        onAddSample: (path) => {
+                            sampleFacade.registerSample(path);
                         }
                     }
 

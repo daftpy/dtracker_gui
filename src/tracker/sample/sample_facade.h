@@ -26,9 +26,8 @@ public:
 
     Q_INVOKABLE void registerSample(const QString& filePath);
 
-public slots:
     // Entry point to preview a sample
-    void previewSample(const QString& filePath);
+    Q_INVOKABLE void previewSample(const QString& filePath);
 
 signals:
     void audioManagerChanged();

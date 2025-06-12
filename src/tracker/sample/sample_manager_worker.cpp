@@ -29,8 +29,11 @@ void SampleManagerWorker::addSample(const QString &filePath)
         auto id = m_sampleManager.addSample(filePath.toStdString(),std::move(cacheEntry.value().data),
             {});
 
+        qDebug() << "Sample added, assigned id" << id;
         emit sampleAdded(id);
+        return;
     }
+    qDebug() << "Sample not found in cache, could not add";
 }
 
 // Check if sample is cached in memory and emit result

@@ -58,6 +58,7 @@ void SampleFacade::setAudioManager(Audio::Manager *manager)
 
 void SampleFacade::registerSample(const QString &filePath)
 {
+    qDebug() << "Adding sample" << filePath;
     emit addSample(filePath);
 }
 

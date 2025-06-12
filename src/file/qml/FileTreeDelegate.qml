@@ -13,6 +13,10 @@ TreeViewDelegate {
     required property url filePath
     required property string fileName
 
+    signal fileClicked(string path)
+    signal fileControlClicked(string path)
+
+
     // Indicator shown to the left of each item (only visible if the item has children)
     indicator: Image {
         id: directoryIcon
@@ -86,12 +90,12 @@ TreeViewDelegate {
         anchors.fill: delegate
         cursorShape: Qt.PointingHandCursor
 
-        onClicked: {
+        onClicked: (mouse) => {
             const path = model.filePath;
             console.log("Clicked:", path);
 
             // Toggle directory expanded state
-            fileTreeView.toggleExpanded(delegate.row)
+            fileTreeView.toggleExpanded(delegate.row);
 
             // Clear selection if collapsing a folder
             if (delegate.hasChildren && !delegate.expanded) {
@@ -101,13 +105,18 @@ TreeViewDelegate {
             // Update selected index
             fileTreeView.lastIndex = delegate.index;
 
-            // Emit preview signal for files only
             if (!delegate.hasChildren) {
-                console.log("FileTreeView: Audio file clicked. emit previewSample")
-                root.previewSample(path);
+                if (mouse.modifiers & Qt.ControlModifier) {
+                    console.log("FileTreeView: Ctrl+Clicked, emit fileControlClicked");
+                    delegate.fileControlClicked(path);
+                } else {
+                    console.log("FileTreeView: Regular click, emit fileClicked");
+                    delegate.fileClicked(path);
+                }
             }
 
             console.log(fileTreeView.lastIndex, delegate.index);
         }
+
     }
 }
