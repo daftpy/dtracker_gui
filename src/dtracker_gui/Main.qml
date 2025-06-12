@@ -31,6 +31,13 @@ Window {
         }
 
 
+    SampleFacade {
+        id: sampleFacade
+
+        audioManager: audioManager
+    }
+
+
     // Core component responsible for many critical application components
     AudioManager {
         id: audioManager
@@ -260,8 +267,7 @@ Window {
                         SplitView.fillWidth: true
                         SplitView.preferredHeight: 200
                         onPreviewSample: (path) => {
-                            // fileLoader.load(path);
-                            audioManager.startDecoding(path);
+                            sampleFacade.checkCache(path);
                         }
                     }
 

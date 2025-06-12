@@ -180,21 +180,39 @@ void Manager::onDecodingFinished(std::vector<float> pcmData, unsigned int sample
     meta.sourceSampleRate = sampleRate;
     meta.bitDepth = sampleBitDepth;
 
-    // 2. Cache the PCM data and metadata in the sample manager
-    int id = m_newSampleManager.addSample(fileInfo.absoluteFilePath().toStdString(), std::move(pcmData), meta);
-    qDebug() << "Sample added, returned id:" << id;
+    // // 2. Cache the PCM data and metadata in the sample manager
+    // int id = m_newSampleManager.addSample(fileInfo.absoluteFilePath().toStdString(), std::move(pcmData), meta);
+    // qDebug() << "Sample added, returned id:" << id;
 
-    // 3. Retrieve the descriptor
-    auto descriptorOpt = m_newSampleManager.getSample(id);
-    if (!descriptorOpt.has_value()) {
-        qWarning() << "Failed to retrieve descriptor for sample ID:" << id;
-        return;
-    }
+    // // 3. Retrieve the descriptor
+    // auto descriptorOpt = m_newSampleManager.getSample(id);
+    // if (!descriptorOpt.has_value()) {
+    //     qWarning() << "Failed to retrieve descriptor for sample ID:" << id;
+    //     return;
+    // }
+
+    dtracker::sample::types::SampleDescriptor descriptor(-1, std::make_shared<const dtracker::audio::types::PCMData>(pcmData), meta);
 
     // 4. Create the playback unit using the helper
-    auto unit = dtracker::audio::playback::makePlaybackUnit(descriptorOpt.value());
+    auto unit = dtracker::audio::playback::makePlaybackUnit(descriptor);
+
+    m_engine.mixerUnit()->addUnit(std::move(unit));
+    emit fileDecoded(fileInfo.absoluteFilePath(), std::move(pcmData), meta);
+}
+
+void Manager::previewPCMData(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, dtracker::audio::types::AudioProperties properties)
+{
+    dtracker::sample::types::SampleMetadata meta;
+    meta.sourceSampleRate = properties.sampleRate;
+    meta.bitDepth = properties.bitDepth;
+
+    dtracker::sample::types::SampleDescriptor descriptor(-1, std::move(pcmData), meta);
+    // 4. Create the playback unit using the helper
+    auto unit = dtracker::audio::playback::makePlaybackUnit(descriptor);
 
     m_engine.mixerUnit()->addUnit(std::move(unit));
 }
+
+
 
 } // namespace Dtracker::Audio
