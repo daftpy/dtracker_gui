@@ -4,6 +4,7 @@
 #include <QObject>
 #include <dtracker/sample/manager.hpp>
 #include <dtracker/sample/types.hpp>
+#include <dtracker/audio/types.hpp>
 #include <QMetaType>
 
 namespace Dtracker::Tracker::Sample {
@@ -18,10 +19,10 @@ public:
 
 public slots:
     // Caches a decoded sample in memory
-    void cacheSample(const QString& filePath, dtracker::audio::types::PCMData pcmData, dtracker::sample::types::SampleMetadata meta);
+    void cacheSample(const QString& filePath, std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, dtracker::sample::types::SampleMetadata meta);
 
     // Placeholder for adding samples to the registry
-    void addSample(const QString& filePath, dtracker::audio::types::PCMData, const dtracker::sample::types::SampleMetadata);
+    void addSample(const QString& filePath);
 
     // Checks if the file is already cached and emits a result
     void isCached(const QString& filePath);

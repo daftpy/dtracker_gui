@@ -31,6 +31,8 @@ SampleFacade::SampleFacade(QObject *parent)
     connect(this, &SampleFacade::requestPCMData,
             m_managerWorker, &SampleManagerWorker::requestPCMData);
 
+    connect(this, &SampleFacade::addSample, m_managerWorker, &SampleManagerWorker::addSample);
+
     // Start the worker thread
     m_workerThread->start();
 }
@@ -52,6 +54,11 @@ void SampleFacade::setAudioManager(Audio::Manager *manager)
 
         emit audioManagerChanged();
     }
+}
+
+void SampleFacade::registerSample(const QString &filePath)
+{
+    emit addSample(filePath);
 }
 
 void SampleFacade::previewSample(const QString &filePath)

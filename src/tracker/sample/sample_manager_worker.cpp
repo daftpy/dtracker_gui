@@ -9,7 +9,7 @@ SampleManagerWorker::SampleManagerWorker(QObject *parent)
 
 // Insert decoded PCM data into the cache and emit result
 void SampleManagerWorker::cacheSample(const QString &filePath,
-                                      dtracker::audio::types::PCMData pcmData,
+                                      std::shared_ptr<const dtracker::audio::types::PCMData> pcmData,
                                       dtracker::sample::types::SampleMetadata meta)
 {
     qDebug() << "Worker: caching sample";
@@ -20,11 +20,17 @@ void SampleManagerWorker::cacheSample(const QString &filePath,
 }
 
 // Placeholder: not needed for your current setup
-void SampleManagerWorker::addSample(const QString &filePath,
-                                    dtracker::audio::types::PCMData,
-                                    const dtracker::sample::types::SampleMetadata)
+void SampleManagerWorker::addSample(const QString &filePath)
 {
     // TODO: registry logic (e.g., assign ID and reuse later)
+    auto cacheEntry = m_sampleManager.peekCache(filePath.toStdString());
+
+    if (cacheEntry.has_value()) {
+        auto id = m_sampleManager.addSample(filePath.toStdString(),std::move(cacheEntry.value().data),
+            {});
+
+        emit sampleAdded(id);
+    }
 }
 
 // Check if sample is cached in memory and emit result

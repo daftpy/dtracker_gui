@@ -6,6 +6,7 @@
 #include <QtQmlIntegration/qqmlintegration.h>
 #include "audio/manager.h"
 #include "sample_manager_worker.h"
+#include "sample_registry_model.h"
 
 // This class orchestrates previewing samples by checking if they're cached,
 // having them decoded if needed, and playing them back via the audio manager.
@@ -23,6 +24,8 @@ public:
     Dtracker::Audio::Manager* audioManager() const;
     void setAudioManager(Dtracker::Audio::Manager* manager);
 
+    Q_INVOKABLE void registerSample(const QString& filePath);
+
 public slots:
     // Entry point to preview a sample
     void previewSample(const QString& filePath);
@@ -36,6 +39,8 @@ signals:
     // Emitted to request the actual PCM data from cache
     void requestPCMData(const QString& filePath);
 
+    void addSample(const QString& filePath);
+
 private slots:
     // Handles result of the cache check
     void handleSampleIsCached(const QString& filePath, bool isCached);
@@ -44,6 +49,8 @@ private:
     Dtracker::Audio::Manager* m_audioManager{nullptr};       // Provides playback and decoding
     SampleManagerWorker* m_managerWorker{nullptr};           // QObject Worker container for SampleManager
     QThread* m_workerThread{nullptr};
+
+    SampleRegistryModel m_sampleRegistry;
 };
 }
 

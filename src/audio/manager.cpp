@@ -144,7 +144,7 @@ void Manager::startDecoding(const QString& filePath)
     emit startDecodingFile(filePath);
 }
 
-void Manager::onDecodingFinished(std::vector<float> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo)
+void Manager::onDecodingFinished(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo)
 {
     qDebug() << "Finished decoding file " << fileInfo.absoluteFilePath();
 
@@ -154,10 +154,10 @@ void Manager::onDecodingFinished(std::vector<float> pcmData, unsigned int sample
     meta.bitDepth = sampleBitDepth;
 
     // 2. Create the descriptor
-    dtracker::sample::types::SampleDescriptor descriptor(-1, std::make_shared<const dtracker::audio::types::PCMData>(pcmData), meta);
+    dtracker::sample::types::SampleDescriptor descriptor(-1, pcmData, meta);
 
     // 3. Create the playback unit using the helper
-    auto unit = dtracker::audio::playback::makePlaybackUnit(descriptor);
+    std::unique_ptr<dtracker::audio::playback::SamplePlaybackUnit> unit = dtracker::audio::playback::makePlaybackUnit(descriptor);
 
     // 4. Move the unit to the mixer (preview)
     m_engine.mixerUnit()->addUnit(std::move(unit));

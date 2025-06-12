@@ -51,13 +51,13 @@ signals:
     void trackManagerChanged();
 
     void startDecodingFile(const QString& filePath);
-    void fileDecoded(const QString& filePath, std::vector<float> pcmData, dtracker::sample::types::SampleMetadata metaData);
+    void fileDecoded(const QString& filePath, std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, dtracker::sample::types::SampleMetadata metaData);
 
 public slots:
     void previewPCMData(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, dtracker::audio::types::AudioProperties properties);
 
 private slots:
-    void onDecodingFinished(std::vector<float> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo);
+    void onDecodingFinished(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo);
 
 private:
     dtracker::audio::Engine m_engine; // Core audio engine (wraps RtAudio)

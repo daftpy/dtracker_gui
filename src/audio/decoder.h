@@ -6,6 +6,7 @@
 #include <QAudioDecoder>
 #include <QAudioBuffer>
 #include <vector>
+#include <dtracker/audio/types.hpp>
 
 namespace Dtracker::Audio {
 
@@ -21,7 +22,7 @@ public:
 
 signals:
     // Emitted when decoding is complete and normalized float PCM data is ready
-    void sampleReady(std::vector<float> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo);
+    void sampleReady(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo);
 
     // Emitted if decoding fails (unsupported format, etc.)
     void errorOccurred(const QString &message);

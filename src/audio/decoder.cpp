@@ -96,7 +96,8 @@ void Decoder::onFinished()
 
     // Stops stale onFinished calls from pushing empty samples
     if (!m_accumulatedSamples.empty()) {
-        emit sampleReady(std::move(m_accumulatedSamples), static_cast<unsigned int>(m_sampleRate), m_sampleBitDepth, m_fileInfo);
+        auto pcmDataPtr = std::make_shared<const dtracker::audio::types::PCMData>(std::move(m_accumulatedSamples));
+        emit sampleReady(std::move(pcmDataPtr), static_cast<unsigned int>(m_sampleRate), m_sampleBitDepth, m_fileInfo);
         m_accumulatedSamples.clear();
         m_sampleBitDepth = 0;
         m_fileInfo = QFileInfo();
