@@ -32,6 +32,8 @@ public slots:
     // Retrieves PCM data from the cache (if available)
     void requestPCMData(const QString& filePath);
 
+    void handleRetrieveSample(int id);
+
 signals:
     void sampleAdded(int id, const QString& name);
 
@@ -45,6 +47,8 @@ signals:
     void PCMDataFound(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, dtracker::audio::types::AudioProperties properties);
 
     void cacheMiss(const QString& filePath);
+
+    void sampleFound(dtracker::sample::types::SampleDescriptor descriptor);
 private:
     // Owns the cache and sample registry
     std::shared_ptr<dtracker::sample::Manager> m_sampleManager;

@@ -85,4 +85,13 @@ void SampleManagerWorker::requestPCMData(const QString &filePath)
     }
 }
 
+void SampleManagerWorker::handleRetrieveSample(int id)
+{
+    auto descriptor = m_sampleManager->getSample(id);
+
+    if (descriptor.has_value()) {
+        emit sampleFound(std::move(descriptor.value()));
+    }
+}
+
 } // namespace Dtracker::Tracker::Sample

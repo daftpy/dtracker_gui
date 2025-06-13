@@ -35,6 +35,7 @@ public:
 
     // QML-invokable command to initiate the sample preview workflow.
     Q_INVOKABLE void previewSample(const QString& filePath);
+    Q_INVOKABLE void previewSample(int id);
 
     // Returns the data model for the QML view.
     SampleRegistryModel* model() const { return m_sampleRegistry; }
@@ -47,11 +48,13 @@ signals:
     void checkCache(const QString& filePath);     // Asks the worker to check if a sample is in the cache.
     void requestPCMData(const QString& filePath); // Asks the worker to retrieve PCM data from the cache.
     void addSample(const QString& filePath);      // Asks the worker to register a new sample instance.
+    void retrieveSample(int id);
 
 private slots:
     // --- Slots to handle results from the worker thread ---
     void handleSampleIsCached(const QString& filePath, bool isCached); // Continues the preview workflow after a cache check.
     void handleSampleAdded(int id, const QString& path);               // Updates the QML model after a sample is registered.
+    void handleSampleIsFound(dtracker::sample::types::SampleDescriptor descriptor);
 
 private:
     // External dependencies and worker management

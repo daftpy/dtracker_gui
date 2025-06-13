@@ -10,7 +10,7 @@ Item {
     required property int index
     required property string name
     required property int id
-    signal addSampleToTrack(int id)
+    signal previewSample(int id)
     signal removeSample(int id)
 
 
@@ -130,7 +130,7 @@ Item {
             id: listViewTapHandler
 
             onSingleTapped: {
-                root.addSampleToTrack(root.id);
+                root.previewSample(root.id);
             }
         }
     }

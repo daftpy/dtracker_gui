@@ -30,13 +30,11 @@ Window {
             ]
         }
 
-
     SampleFacade {
         id: sampleFacade
 
         audioManager: audioManager
     }
-
 
     // Core component responsible for many critical application components
     AudioManager {
@@ -53,16 +51,6 @@ Window {
             playSampleByID(sampleID)    -- plays a sampleById through the backend SampleManager
         */
     }
-
-    // Registers samples in the backend and an internal list for exposure to QML
-    // SampleRegistry {
-    //     id: sampleRegistry
-    //     sampleManager: audioManager.sampleManager();
-
-    //     onSampleAdded: (id) => {
-    //         console.log("Sample added:", id);
-    //     }
-    // }
 
     // Manages Tracks in the backend and exposes necessary parts through QML
     TrackManager {
@@ -225,8 +213,6 @@ Window {
             // Layout rules
             Layout.fillWidth: true
             Layout.fillHeight: true
-            // Layout.leftMargin: 8
-            // Layout.rightMargin: 8
             Layout.leftMargin: 4
             Layout.rightMargin: 4
 
@@ -296,13 +282,14 @@ Window {
                         //model: sampleRegistry.model
                         model: sampleFacade.model
 
-                        onAddSampleToTrack: (sampleId) => {
-                            console.log("Adding sample to track 0");
+                        onPreviewSample: (sampleId) => {
+                            console.log("Previewing sample");
                             // audioManager.addSampleToTrack(sampleId, 0);
+                            sampleFacade.previewSample(sampleId);
                         }
 
                         onRemoveSample: (id) => {
-                            //sampleRegistry.removeSample(id);
+                            // TODO: sampleFacade.remove(id)
                         }
                     }
                 }

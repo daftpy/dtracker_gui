@@ -5,7 +5,7 @@ Item {
     id: root
     required property SampleRegistryModel model
     signal removeSample(int id)
-    signal addSampleToTrack(int id)
+    signal previewSample(int id)
 
     Rectangle {
         anchors.fill: parent
@@ -29,8 +29,8 @@ Item {
                     root.removeSample(id);
                 }
 
-                onAddSampleToTrack: (id) => {
-                    root.addSampleToTrack(id);
+                onPreviewSample: (id) => {
+                    root.previewSample(id);
                 }
             }
         }

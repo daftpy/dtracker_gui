@@ -40,6 +40,8 @@ SampleFacade::SampleFacade(QObject *parent)
                 qDebug() << "Sample successfully cached. Size:" << pcm->size();
             });
 
+    connect(this, &SampleFacade::retrieveSample, m_managerWorker, &SampleManagerWorker::handleRetrieveSample);
+
     // Start the worker thread's event loop.
     m_workerThread->start();
 }
@@ -78,6 +80,8 @@ void SampleFacade::setAudioManager(Audio::Manager *manager)
         connect(m_managerWorker, &SampleManagerWorker::cacheMiss,
                 m_audioManager, &Audio::Manager::startDecodingFile);
 
+        connect (m_managerWorker, &SampleManagerWorker::sampleFound, this, &SampleFacade::handleSampleIsFound);
+
         qDebug() << "audioManager property updated";
 
         emit audioManagerChanged();
@@ -95,6 +99,11 @@ void SampleFacade::registerSample(const QString &filePath)
 void SampleFacade::previewSample(const QString &filePath)
 {
     emit checkCache(filePath);
+}
+
+void SampleFacade::previewSample(int id)
+{
+    emit retrieveSample(id);
 }
 
 // Slot that continues the preview workflow after the cache check completes.
@@ -117,6 +126,11 @@ void SampleFacade::handleSampleIsCached(const QString &filePath, bool isCached)
 void SampleFacade::handleSampleAdded(int id, const QString& filePath)
 {
     m_sampleRegistry->addSample(id, filePath);
+}
+
+void SampleFacade::handleSampleIsFound(dtracker::sample::types::SampleDescriptor descriptor)
+{
+    m_audioManager->previewPCMData(std::move(descriptor.pcmData()), {descriptor.metadata().sourceSampleRate, descriptor.metadata().bitDepth, 2});
 }
 
 Audio::Manager* SampleFacade::audioManager() const
