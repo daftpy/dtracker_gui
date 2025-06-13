@@ -7,56 +7,60 @@
 #include "audio/manager.h"
 #include "sample_manager_worker.h"
 #include "sample_registry_model.h"
+#include <memory>
 
-// This class orchestrates previewing samples by checking if they're cached,
-// having them decoded if needed, and playing them back via the audio manager.
+// Orchestrates sample management workflows between the UI, a worker thread, and the audio engine.
+// This class acts as a central coordinator, exposing a clean API to QML.
 namespace Dtracker::Tracker::Sample {
 class SampleFacade : public QObject
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(SampleFacade)
 
-    // Allow to be set by QML
+    // Injected dependency for decoding and playback capabilities.
     Q_PROPERTY(Dtracker::Audio::Manager* audioManager READ audioManager WRITE setAudioManager NOTIFY audioManagerChanged)
 
-    // Exposes the list model (used for displaying samples in QML)
+    // Exposes the sample list to QML views.
     Q_PROPERTY(SampleRegistryModel* model READ model CONSTANT)
+
 public:
     explicit SampleFacade(QObject *parent = nullptr);
 
     Dtracker::Audio::Manager* audioManager() const;
     void setAudioManager(Dtracker::Audio::Manager* manager);
 
+    // QML-invokable command to begin asynchronous sample registration.
     Q_INVOKABLE void registerSample(const QString& filePath);
 
-    // Entry point to preview a sample
+    // QML-invokable command to initiate the sample preview workflow.
     Q_INVOKABLE void previewSample(const QString& filePath);
 
+    // Returns the data model for the QML view.
     SampleRegistryModel* model() const { return m_sampleRegistry; }
 
 signals:
+    // Notifies when the audioManager dependency has been set.
     void audioManagerChanged();
 
-    // Emitted to check if a sample is already cached
-    void checkCache(const QString& filePath);
-
-    // Emitted to request the actual PCM data from cache
-    void requestPCMData(const QString& filePath);
-
-    void addSample(const QString& filePath);
+    // --- Signals to delegate tasks to the worker thread ---
+    void checkCache(const QString& filePath);     // Asks the worker to check if a sample is in the cache.
+    void requestPCMData(const QString& filePath); // Asks the worker to retrieve PCM data from the cache.
+    void addSample(const QString& filePath);      // Asks the worker to register a new sample instance.
 
 private slots:
-    // Handles result of the cache check
-    void handleSampleIsCached(const QString& filePath, bool isCached);
-
-    void handleSampleAdded(int id, const QString& path);
+    // --- Slots to handle results from the worker thread ---
+    void handleSampleIsCached(const QString& filePath, bool isCached); // Continues the preview workflow after a cache check.
+    void handleSampleAdded(int id, const QString& path);               // Updates the QML model after a sample is registered.
 
 private:
-    Dtracker::Audio::Manager* m_audioManager{nullptr};       // Provides playback and decoding
-    SampleManagerWorker* m_managerWorker{nullptr};           // QObject Worker container for SampleManager
-    QThread* m_workerThread{nullptr};
+    // External dependencies and worker management
+    Dtracker::Audio::Manager* m_audioManager{nullptr};      // The audio engine for playback and decoding.
+    SampleManagerWorker* m_managerWorker{nullptr};          // The worker object that runs on the background thread.
+    QThread* m_workerThread{nullptr};                       // The background thread for all sample management tasks.
 
-    SampleRegistryModel* m_sampleRegistry{new SampleRegistryModel(this)};
+    // Owned resources
+    std::shared_ptr<dtracker::sample::Manager> m_sampleManager; // The central, shared sample data manager.
+    SampleRegistryModel* m_sampleRegistry{new SampleRegistryModel(this)}; // The data model exposed to the UI.
 };
 }
 

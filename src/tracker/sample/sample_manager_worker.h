@@ -5,6 +5,7 @@
 #include <dtracker/sample/manager.hpp>
 #include <dtracker/sample/types.hpp>
 #include <dtracker/audio/types.hpp>
+#include <memory>
 #include <QMetaType>
 
 namespace Dtracker::Tracker::Sample {
@@ -15,7 +16,7 @@ class SampleManagerWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit SampleManagerWorker(QObject *parent = nullptr);
+    explicit SampleManagerWorker(std::shared_ptr<dtracker::sample::Manager> manager, QObject *parent = nullptr);
 
 public slots:
     // Caches a decoded sample in memory
@@ -44,7 +45,7 @@ signals:
 
 private:
     // Owns the cache and sample registry
-    dtracker::sample::Manager m_sampleManager;
+    std::shared_ptr<dtracker::sample::Manager> m_sampleManager;
 };
 }
 

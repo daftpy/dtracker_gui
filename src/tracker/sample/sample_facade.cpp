@@ -5,50 +5,56 @@ namespace Dtracker::Tracker::Sample {
 SampleFacade::SampleFacade(QObject *parent)
     : QObject{parent}
 {
-    // Create a background thread and move the worker into it
+    // Create the central, shared sample data manager.
+    m_sampleManager = std::make_shared<dtracker::sample::Manager>();
+
+    // Set up a worker on a background thread to handle all sample operations.
     m_workerThread = new QThread(this);
-    m_managerWorker = new SampleManagerWorker();
+    m_managerWorker = new SampleManagerWorker(m_sampleManager);
     m_managerWorker->moveToThread(m_workerThread);
 
-    // Automatically delete the worker when the thread is finished
+    // Ensure worker is deleted cleanly when the thread exits.
     connect(m_workerThread, &QThread::finished, m_managerWorker, &QObject::deleteLater);
 
-    // Forward request to check whether sample is cached
+    // --- Wire up the asynchronous workflows between the facade and the worker ---
+
+    // Delegate cache check requests to the worker.
     connect(this, &SampleFacade::checkCache,
             m_managerWorker, &SampleManagerWorker::isCached);
 
-    // Handle the result of that check
+    // Process the result of the asynchronous cache check.
     connect(m_managerWorker, &SampleManagerWorker::sampleIsCached,
             this, &SampleFacade::handleSampleIsCached);
 
-    // Log when a sample is successfully cached
+    // Delegate requests for cached PCM data to the worker.
+    connect(this, &SampleFacade::requestPCMData,
+            m_managerWorker, &SampleManagerWorker::requestPCMData);
+
+    // Wire up the sample registration workflow.
+    connect(this, &SampleFacade::addSample, m_managerWorker, &SampleManagerWorker::addSample);
+    connect(m_managerWorker, &SampleManagerWorker::sampleAdded, this, &SampleFacade::handleSampleAdded);
+
+    // For debugging: log when the worker successfully caches a sample.
     connect(m_managerWorker, &SampleManagerWorker::sampleCached,
             this, [](const std::shared_ptr<const dtracker::audio::types::PCMData>& pcm) {
                 qDebug() << "Sample successfully cached. Size:" << pcm->size();
             });
 
-    // Request PCM data for playback from cache
-    connect(this, &SampleFacade::requestPCMData,
-            m_managerWorker, &SampleManagerWorker::requestPCMData);
-
-    connect(this, &SampleFacade::addSample, m_managerWorker, &SampleManagerWorker::addSample);
-
-    connect(m_managerWorker, &SampleManagerWorker::sampleAdded, this, &SampleFacade::handleSampleAdded);
-
-    // Start the worker thread
+    // Start the worker thread's event loop.
     m_workerThread->start();
 }
 
+// Injects the AudioManager and connects the necessary cross-system signals.
 void SampleFacade::setAudioManager(Audio::Manager *manager)
 {
     if (m_audioManager != manager) {
         m_audioManager = manager;
 
-        // When a file is decoded by the AudioManager, cache it
+        // When a file is decoded, tell the worker to cache the data.
         connect(m_audioManager, &Audio::Manager::fileDecoded,
                 m_managerWorker, &SampleManagerWorker::cacheSample);
 
-        // When PCM data is retrieved from cache, forward to AudioManager for playback
+        // When cached data is found, tell the audio manager to play it.
         connect(m_managerWorker, &SampleManagerWorker::PCMDataFound,
                 m_audioManager, &Audio::Manager::previewPCMData);
 
@@ -58,33 +64,36 @@ void SampleFacade::setAudioManager(Audio::Manager *manager)
     }
 }
 
+// Public API to begin the asynchronous sample registration process.
 void SampleFacade::registerSample(const QString &filePath)
 {
     qDebug() << "Adding sample" << filePath;
     emit addSample(filePath);
 }
 
+// Kicks off the async preview workflow by first checking the cache.
 void SampleFacade::previewSample(const QString &filePath)
 {
-    // Step 1: Ask the worker if this sample is already cached
     emit checkCache(filePath);
 }
 
+// Slot that continues the preview workflow after the cache check completes.
 void SampleFacade::handleSampleIsCached(const QString &filePath, bool isCached)
 {
     if (m_audioManager != nullptr && !isCached)
     {
-        // Step 2A: Not cached — ask AudioManager to decode the sample (which will trigger caching & playback)
+        // Cache miss: Tell the AudioManager to decode the file. This will trigger
+        // the worker's cacheSample slot after decoding.
         m_audioManager->startDecoding(filePath);
         return;
     }
 
-    qDebug() << "Sample is already cached";
-
-    // Step 2B: Already cached. Ask worker to fetch PCM so AudioManager can play it
+    // Cache hit: Request the PCM data from the worker for immediate playback.
+    qDebug() << "Sample is already cached, requesting PCM data.";
     emit requestPCMData(filePath);
 }
 
+// Slot to update the QML model when the worker confirms a sample was registered.
 void SampleFacade::handleSampleAdded(int id, const QString& filePath)
 {
     m_sampleRegistry->addSample(id, filePath);
