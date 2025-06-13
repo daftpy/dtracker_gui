@@ -44,6 +44,20 @@ SampleFacade::SampleFacade(QObject *parent)
     m_workerThread->start();
 }
 
+SampleFacade::~SampleFacade()
+{
+    m_workerThread->quit();
+
+    // A short timeout is added as a safeguard in case the thread is stuck
+    if (!m_workerThread->wait(3000)) // Wait for up to 3 seconds
+    {
+        // If the thread did not shut down gracefully, forcefully terminate it
+        qDebug() << "Warning: Worker thread did not shut down in time. Forcing termination.";
+        m_workerThread->terminate();
+        m_workerThread->wait(); // Wait for the termination to complete.
+    }
+}
+
 // Injects the AudioManager and connects the necessary cross-system signals.
 void SampleFacade::setAudioManager(Audio::Manager *manager)
 {

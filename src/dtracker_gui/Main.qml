@@ -77,9 +77,7 @@ Window {
         // Playback Bar Background
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 36
-            // Layout.margins: 8
-            // radius: 6
+            Layout.preferredHeight: 42
 
             Layout.leftMargin: 4
             Layout.rightMargin: 4
@@ -92,8 +90,8 @@ Window {
             // Playback Navigation
             RowLayout {
                 anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
+                anchors.leftMargin: 6
+                anchors.rightMargin: 6
 
                 Row {
                     id: playbackComponents
@@ -174,23 +172,26 @@ Window {
 
                 // Add Track Button
                 Rectangle {
-                    width: addTrackIcon.implicitWidth
-                    height: addTrackIcon.implicitHeight
+                    width: addTrackIcon.width
+                    height: addTrackIcon.height
                     color: "transparent"
+                    Layout.alignment: Qt.AlignVCenter
 
                     Image {
                         id: addTrackIcon
                         anchors.centerIn: parent
 
                         // atlast positions for different icon state
-                        property var inactive: Qt.rect(0, 0, 40, 40)
-                        property var hovered: Qt.rect(36, 0, 40, 40)
+                        property var inactive: Qt.rect(0, 0, 80, 80)
+                        property var hovered: Qt.rect(72, 0, 80, 80)
 
                         source: "tracker/icons/plus-square-fill-atlas.svg"
 
+                        width: 24
+                        height: 24
                         // Scale the svg down
-                        sourceSize.width: 96
-                        sourceSize.height: 24
+                        sourceSize.width: 192
+                        sourceSize.height: 48
                         // Use a clip to only show a section of the atlas
                         sourceClipRect: addTrackIconHoverHandler.hovered ? hovered : inactive
                         antialiasing: true

@@ -25,6 +25,7 @@ class SampleFacade : public QObject
 
 public:
     explicit SampleFacade(QObject *parent = nullptr);
+    ~SampleFacade();
 
     Dtracker::Audio::Manager* audioManager() const;
     void setAudioManager(Dtracker::Audio::Manager* manager);
