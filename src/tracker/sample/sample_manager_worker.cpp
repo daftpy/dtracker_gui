@@ -1,5 +1,6 @@
 #include "sample_manager_worker.h"
 #include <QDebug>
+#include <QFileInfo>
 
 namespace Dtracker::Tracker::Sample {
 
@@ -30,9 +31,11 @@ void SampleManagerWorker::addSample(const QString &filePath)
             {});
 
         qDebug() << "Sample added, assigned id" << id;
-        emit sampleAdded(id);
+        emit sampleAdded(id, QFileInfo(filePath).fileName());
         return;
     }
+
+    // todo: cache miss
     qDebug() << "Sample not found in cache, could not add";
 }
 

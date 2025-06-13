@@ -77,9 +77,15 @@ Window {
         // Playback Bar Background
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 48
-            Layout.margins: 8
-            radius: 6
+            Layout.preferredHeight: 36
+            // Layout.margins: 8
+            // radius: 6
+
+            Layout.leftMargin: 4
+            Layout.rightMargin: 4
+            Layout.topMargin: 6
+            Layout.bottomMargin: 2
+            radius: 2
 
             color: "#272a2e"
 
@@ -99,14 +105,16 @@ Window {
                         anchors.verticalCenter: parent.verticalCenter
 
                         // atlast positions for different icon state
-                        property var inactive: Qt.rect(0, 0, 40, 40)
-                        property var hovered: Qt.rect(72, 0, 40, 40)
+                        property var inactive: Qt.rect(0, 0, 80, 80)
+                        property var hovered: Qt.rect(72, 0, 80, 80)
 
                         source: "tracker/icons/play-fill-atlas.svg"
 
+                        width: 24
+                        height: 24
                         // Scale the svg down
-                        sourceSize.width: 96
-                        sourceSize.height: 24
+                        sourceSize.width: 192
+                        sourceSize.height: 48
                         // Use a clip to only show a section of the atlas
                         sourceClipRect: playbackTimer.running ? hovered : playTrackIconHoverHandler.hovered ? hovered : inactive
                         antialiasing: true
@@ -136,14 +144,16 @@ Window {
                         anchors.verticalCenter: parent.verticalCenter
 
                         // atlast positions for different icon state
-                        property var inactive: Qt.rect(0, 0, 40, 40)
-                        property var hovered: Qt.rect(108, 0, 40, 40)
+                        property var inactive: Qt.rect(0, 0, 80, 80)
+                        property var hovered: Qt.rect(144, 0, 80, 80)
 
                         source: "tracker/icons/stop-fill-atlas.svg"
 
+                        width: 24
+                        height: 24
                         // Scale the svg down
-                        sourceSize.width: 96
-                        sourceSize.height: 24
+                        sourceSize.width: 192
+                        sourceSize.height: 48
                         // Use a clip to only show a section of the atlas
                         sourceClipRect: stopTrackIconHoverHandler.hovered ? hovered : inactive
                         antialiasing: true
@@ -214,8 +224,10 @@ Window {
             // Layout rules
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.leftMargin: 8
-            Layout.rightMargin: 8
+            // Layout.leftMargin: 8
+            // Layout.rightMargin: 8
+            Layout.leftMargin: 4
+            Layout.rightMargin: 4
 
             // Grabbable handle rules
             handle: Rectangle {
@@ -280,7 +292,8 @@ Window {
                         id: sampleRegistryView
                         SplitView.preferredHeight: 200
                         SplitView.fillWidth: true
-                        model: sampleRegistry.model
+                        //model: sampleRegistry.model
+                        model: sampleFacade.model
 
                         onAddSampleToTrack: (sampleId) => {
                             console.log("Adding sample to track 0");

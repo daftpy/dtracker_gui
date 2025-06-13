@@ -31,7 +31,7 @@ public slots:
     void requestPCMData(const QString& filePath);
 
 signals:
-    void sampleAdded(int id);
+    void sampleAdded(int id, const QString& name);
 
     // Emitted when a sample is inserted into the cache
     void sampleCached(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData);

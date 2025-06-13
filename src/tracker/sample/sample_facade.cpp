@@ -33,6 +33,8 @@ SampleFacade::SampleFacade(QObject *parent)
 
     connect(this, &SampleFacade::addSample, m_managerWorker, &SampleManagerWorker::addSample);
 
+    connect(m_managerWorker, &SampleManagerWorker::sampleAdded, this, &SampleFacade::handleSampleAdded);
+
     // Start the worker thread
     m_workerThread->start();
 }
@@ -81,6 +83,11 @@ void SampleFacade::handleSampleIsCached(const QString &filePath, bool isCached)
 
     // Step 2B: Already cached. Ask worker to fetch PCM so AudioManager can play it
     emit requestPCMData(filePath);
+}
+
+void SampleFacade::handleSampleAdded(int id, const QString& filePath)
+{
+    m_sampleRegistry->addSample(id, filePath);
 }
 
 Audio::Manager* SampleFacade::audioManager() const

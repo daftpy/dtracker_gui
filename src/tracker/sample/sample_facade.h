@@ -18,6 +18,9 @@ class SampleFacade : public QObject
 
     // Allow to be set by QML
     Q_PROPERTY(Dtracker::Audio::Manager* audioManager READ audioManager WRITE setAudioManager NOTIFY audioManagerChanged)
+
+    // Exposes the list model (used for displaying samples in QML)
+    Q_PROPERTY(SampleRegistryModel* model READ model CONSTANT)
 public:
     explicit SampleFacade(QObject *parent = nullptr);
 
@@ -28,6 +31,8 @@ public:
 
     // Entry point to preview a sample
     Q_INVOKABLE void previewSample(const QString& filePath);
+
+    SampleRegistryModel* model() const { return m_sampleRegistry; }
 
 signals:
     void audioManagerChanged();
@@ -44,12 +49,14 @@ private slots:
     // Handles result of the cache check
     void handleSampleIsCached(const QString& filePath, bool isCached);
 
+    void handleSampleAdded(int id, const QString& path);
+
 private:
     Dtracker::Audio::Manager* m_audioManager{nullptr};       // Provides playback and decoding
     SampleManagerWorker* m_managerWorker{nullptr};           // QObject Worker container for SampleManager
     QThread* m_workerThread{nullptr};
 
-    SampleRegistryModel m_sampleRegistry;
+    SampleRegistryModel* m_sampleRegistry{new SampleRegistryModel(this)};
 };
 }
 

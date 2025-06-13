@@ -16,9 +16,9 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        anchors.bottomMargin: 4
+        anchors.bottomMargin: 2
         color: "#272a2e"
-        radius: 3
+        radius: 2
 
         TreeView {
             id: fileTreeView
