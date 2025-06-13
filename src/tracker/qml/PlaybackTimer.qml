@@ -16,7 +16,7 @@ Timer {
 
         const sampleId = patternModel.data(patternModel.index(currentStep, 0), PatternStepModel.SampleIdRole)
         if (sampleId >= 0) {
-            audioManager.playSampleById(sampleId);
+            //audioManager.playSampleById(sampleId);
         }
 
         currentStep = (currentStep + 1) % patternModel.rowCount();

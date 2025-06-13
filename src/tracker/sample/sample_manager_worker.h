@@ -7,6 +7,7 @@
 #include <dtracker/audio/types.hpp>
 #include <memory>
 #include <QMetaType>
+#include <QSet>
 
 namespace Dtracker::Tracker::Sample {
 
@@ -43,9 +44,13 @@ signals:
     // Emitted when PCMData is found
     void PCMDataFound(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, dtracker::audio::types::AudioProperties properties);
 
+    void cacheMiss(const QString& filePath);
 private:
     // Owns the cache and sample registry
     std::shared_ptr<dtracker::sample::Manager> m_sampleManager;
+
+    // Keeps track of files that are pending registration after decoding completes.
+    QSet<QString> m_pendingRegistrations;
 };
 }
 

@@ -11,7 +11,6 @@
 #include "decoder.h"
 #include <dtracker/audio/engine.hpp>
 #include <dtracker/audio/playback_manager.hpp>
-#include <dtracker/audio/sample_manager.hpp>
 #include <dtracker/tracker/track_manager.hpp>
 #include <dtracker/sample/manager.hpp>
 
@@ -40,7 +39,7 @@ public:
     Q_INVOKABLE void stopSin();                  // Stop tone playback
     Q_INVOKABLE void addSampleToTrack(int sampleId, int trackId);
     Q_INVOKABLE void playTrack();
-    Q_INVOKABLE dtracker::audio::SampleManager* sampleManager();
+    //Q_INVOKABLE dtracker::audio::SampleManager* sampleManager();
     dtracker::tracker::TrackManager* trackManager();
 
     Q_INVOKABLE void startDecoding(const QString& filePath);
@@ -55,6 +54,7 @@ signals:
 
 public slots:
     void previewPCMData(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, dtracker::audio::types::AudioProperties properties);
+    void handleCacheMiss(const QString& filePath);
 
 private slots:
     void onDecodingFinished(std::shared_ptr<const dtracker::audio::types::PCMData> pcmData, unsigned int sampleRate, unsigned int sampleBitDepth, QFileInfo fileInfo);
@@ -63,11 +63,14 @@ private:
     dtracker::audio::Engine m_engine; // Core audio engine (wraps RtAudio)
     std::optional<Types::DeviceInfo> m_currentDeviceInfo; // Cached output device info
 
-    std::unique_ptr<dtracker::audio::SampleManager> m_sampleManager;
+
+    // TODO: Remove this one below, its temporary here so we can construct playback manager and track manager that also need to be refactored
+    dtracker::sample::Manager m_newSampleManager;
+
+    // std::unique_ptr<dtracker::audio::SampleManager> m_sampleManager;
     std::unique_ptr<dtracker::audio::PlaybackManager> m_playbackManager; // Manages active playback units
     std::unique_ptr<dtracker::tracker::TrackManager> m_trackManager;
 
-    dtracker::sample::Manager m_newSampleManager;
     QThread* m_workerThread;
     Decoder* m_audioDecoder;
 };

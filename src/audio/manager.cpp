@@ -15,13 +15,13 @@ Manager::Manager(QObject *parent)
     dtracker::audio::DeviceManager dm = m_engine.createDeviceManager();
 
     // Create the sampleManager responsible for storing sample audio in memory
-    m_sampleManager = std::make_unique<dtracker::audio::SampleManager>();
+    // m_sampleManager = std::make_unique<dtracker::audio::SampleManager>();
 
     // Create the track manager, responsible for creating tracks in memory
-    m_trackManager = std::make_unique<dtracker::tracker::TrackManager>(m_sampleManager.get());
+    m_trackManager = std::make_unique<dtracker::tracker::TrackManager>(&m_newSampleManager);
 
     // Create the PlaybackManager, responsible for routing decoded samples to the engine
-    m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(&m_engine, m_sampleManager.get());
+    m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(&m_engine, &m_newSampleManager);
 
     // Attempt to find and set a valid output device
     if (dm.currentDeviceInfo().has_value()) {
@@ -128,10 +128,10 @@ void Manager::playTrack()
     }
 }
 
-dtracker::audio::SampleManager *Manager::sampleManager()
-{
-    return m_sampleManager.get();
-}
+// dtracker::audio::SampleManager *Manager::sampleManager()
+// {
+//     return m_sampleManager.get();
+// }
 
 dtracker::tracker::TrackManager *Manager::trackManager()
 {
@@ -181,6 +181,11 @@ void Manager::previewPCMData(std::shared_ptr<const dtracker::audio::types::PCMDa
 
     // 4. Move the unit to the mixer (preview)
     m_engine.mixerUnit()->addUnit(std::move(unit));
+}
+
+void Manager::handleCacheMiss(const QString &filePath)
+{
+
 }
 
 

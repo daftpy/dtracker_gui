@@ -15,30 +15,53 @@ void SampleManagerWorker::cacheSample(const QString &filePath,
                                       std::shared_ptr<const dtracker::audio::types::PCMData> pcmData,
                                       dtracker::sample::types::SampleMetadata meta)
 {
-    qDebug() << "Worker: caching sample";
+    qDebug() << "Worker: caching sample for" << filePath;
     auto pcmPtr = m_sampleManager->cacheSample(filePath.toStdString(), std::move(pcmData), meta);
+    emit sampleCached(std::move(pcmPtr)); // Notify that caching is done.
 
-    // Notify listeners that the sample is now cached
-    emit sampleCached(std::move(pcmPtr));
+    // Check if this newly cached sample was one we were waiting to register.
+    if (m_pendingRegistrations.contains(filePath))
+    {
+        qDebug() << "Worker: Continuing pending registration for" << filePath;
+
+        // The data is now cached, so we can call addSample again to finish the job.
+        // This time it will be a cache hit.
+        addSample(filePath);
+
+        // Clean up the pending request.
+        m_pendingRegistrations.remove(filePath);
+    }
 }
 
 // Placeholder: not needed for your current setup
 void SampleManagerWorker::addSample(const QString &filePath)
 {
-    // TODO: registry logic (e.g., assign ID and reuse later)
-    auto cacheEntry = m_sampleManager->peekCache(filePath.toStdString());
+    // Check if the sample's data is already in the cache.
+    if (m_sampleManager->peekCache(filePath.toStdString()).has_value())
+    {
+        // The manager returns an int, with -1 indicating failure.
+        int newId = m_sampleManager->addSample(filePath.toStdString());
 
-    if (cacheEntry.has_value()) {
-        auto id = m_sampleManager->addSample(filePath.toStdString(),std::move(cacheEntry.value().data),
-            {});
-
-        qDebug() << "Sample added, assigned id" << id;
-        emit sampleAdded(id, QFileInfo(filePath).fileName());
-        return;
+        if (newId != -1)
+        {
+            qDebug() << "Sample registered from existing cache, assigned id" << newId;
+            emit sampleAdded(newId, QFileInfo(filePath).fileName());
+        }
+        else
+        {
+            qDebug() << "Failed to register sample even though it was found in cache:" << filePath;
+        }
     }
+    else
+    {
+        // The data is not in the cache. Request decoding.
+        qDebug() << "Sample not in cache. Requesting decoding for" << filePath;
 
-    // todo: cache miss
-    qDebug() << "Sample not found in cache, could not add";
+        // Mark this path as pending registration.
+        m_pendingRegistrations.insert(filePath);
+
+        emit cacheMiss(filePath);
+    }
 }
 
 // Check if sample is cached in memory and emit result

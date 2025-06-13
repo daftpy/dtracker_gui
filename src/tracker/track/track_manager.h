@@ -7,7 +7,6 @@
 
 #include "track_list_model.h"
 #include <dtracker/tracker/track_manager.hpp>
-#include <dtracker/audio/sample_manager.hpp>
 
 namespace Dtracker::Tracker {
 

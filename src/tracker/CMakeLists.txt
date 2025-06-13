@@ -23,7 +23,6 @@ qt_add_qml_module(tracker
         track/track_manager.h track/track_manager.cpp
         sample/sample_registry_model.h sample/sample_registry_model.cpp
         sample/sample_entry.h
-        sample/sample_registry.h sample/sample_registry.cpp
         types/track_config.h types/track_config.cpp
         pattern/pattern_step_model.h pattern/pattern_step_model.cpp
         sample/sample_facade.h sample/sample_facade.cpp

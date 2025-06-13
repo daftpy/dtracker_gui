@@ -55,14 +55,14 @@ Window {
     }
 
     // Registers samples in the backend and an internal list for exposure to QML
-    SampleRegistry {
-        id: sampleRegistry
-        sampleManager: audioManager.sampleManager();
+    // SampleRegistry {
+    //     id: sampleRegistry
+    //     sampleManager: audioManager.sampleManager();
 
-        onSampleAdded: (id) => {
-            console.log("Sample added:", id);
-        }
-    }
+    //     onSampleAdded: (id) => {
+    //         console.log("Sample added:", id);
+    //     }
+    // }
 
     // Manages Tracks in the backend and exposes necessary parts through QML
     TrackManager {
@@ -302,7 +302,7 @@ Window {
                         }
 
                         onRemoveSample: (id) => {
-                            sampleRegistry.removeSample(id);
+                            //sampleRegistry.removeSample(id);
                         }
                     }
                 }
@@ -339,7 +339,7 @@ Window {
                         delegate: TrackView {
                             onPlaySample: (id) => {
                                 console.log("Playing by ID");
-                                audioManager.playSampleById(id);
+                                // audioManager.playSampleById(id);
                             }
                         }
                     }

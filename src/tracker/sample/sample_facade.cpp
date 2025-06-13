@@ -66,11 +66,17 @@ void SampleFacade::setAudioManager(Audio::Manager *manager)
 
         // When a file is decoded, tell the worker to cache the data.
         connect(m_audioManager, &Audio::Manager::fileDecoded,
-                m_managerWorker, &SampleManagerWorker::cacheSample);
+            m_managerWorker, &SampleManagerWorker::cacheSample);
 
         // When cached data is found, tell the audio manager to play it.
         connect(m_managerWorker, &SampleManagerWorker::PCMDataFound,
-                m_audioManager, &Audio::Manager::previewPCMData);
+            m_audioManager, &Audio::Manager::previewPCMData);
+
+        connect(m_managerWorker, &SampleManagerWorker::cacheMiss,
+            m_audioManager, &Audio::Manager::handleCacheMiss);
+
+        connect(m_managerWorker, &SampleManagerWorker::cacheMiss,
+                m_audioManager, &Audio::Manager::startDecodingFile);
 
         qDebug() << "audioManager property updated";
 
