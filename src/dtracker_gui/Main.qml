@@ -34,6 +34,16 @@ Window {
         id: sampleFacade
 
         audioManager: audioManager
+
+        onPlaybackSample: (unit) => {
+            console.log("Sending too playbacck facade");
+            playbackFacade.playbackSample(unit);
+        }
+    }
+
+    PlaybackFacade {
+        engine: audioManager.engine
+        id: playbackFacade
     }
 
     // Core component responsible for many critical application components

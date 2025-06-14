@@ -14,14 +14,11 @@ Manager::Manager(QObject *parent)
     // Create DeviceManager using the engine's internal RtAudio instance
     dtracker::audio::DeviceManager dm = m_engine.createDeviceManager();
 
-    // Create the sampleManager responsible for storing sample audio in memory
-    // m_sampleManager = std::make_unique<dtracker::audio::SampleManager>();
-
     // Create the track manager, responsible for creating tracks in memory
-    m_trackManager = std::make_unique<dtracker::tracker::TrackManager>(&m_newSampleManager);
+    m_trackManager = std::make_unique<dtracker::tracker::TrackManager>();
 
     // Create the PlaybackManager, responsible for routing decoded samples to the engine
-    m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(&m_engine, &m_newSampleManager);
+    m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(&m_engine);
 
     // Attempt to find and set a valid output device
     if (dm.currentDeviceInfo().has_value()) {
@@ -87,22 +84,6 @@ void Manager::startEngine()
     }
 }
 
-// Starts playback of a 440 Hz test tone
-void Manager::startSin()
-{
-    if (m_playbackManager) {
-        m_playbackManager->playTestTone(440);
-    }
-}
-
-// Stops any ongoing playback
-void Manager::stopSin()
-{
-    if (m_playbackManager) {
-        m_playbackManager->stopPlayback();
-    }
-}
-
 void Manager::addSampleToTrack(int sampleId, int trackId)
 {
     if (!m_trackManager)
@@ -116,22 +97,6 @@ void Manager::addSampleToTrack(int sampleId, int trackId)
         qDebug() << "Failed to add sample" << sampleId << "to track" << 0;
     }
 }
-
-void Manager::playTrack()
-{
-    auto* track = m_trackManager->getTrack(0);
-    if (track) {
-        qDebug() << "track found";
-        m_engine.mixerUnit()->clear();   // Remove any leftover units
-        track->reset();                  // Restart the track
-        // m_engine.mixerUnit()->addUnit(track); // Add again
-    }
-}
-
-// dtracker::audio::SampleManager *Manager::sampleManager()
-// {
-//     return m_sampleManager.get();
-// }
 
 dtracker::tracker::TrackManager *Manager::trackManager()
 {
@@ -158,8 +123,10 @@ void Manager::onDecodingFinished(std::shared_ptr<const dtracker::audio::types::P
 
     // 3. Create the playback unit using the helper
     std::unique_ptr<dtracker::audio::playback::SamplePlaybackUnit> unit = dtracker::audio::playback::makePlaybackUnit(descriptor);
+    // 4. Clear the mixer (stop sound)
+    m_engine.mixerUnit()->clear();
 
-    // 4. Move the unit to the mixer (preview)
+    // 5. Move the unit to the mixer (preview)
     m_engine.mixerUnit()->addUnit(std::move(unit));
 
     // Emit the file has been decoded with the pcm and meta data
@@ -179,15 +146,11 @@ void Manager::previewPCMData(std::shared_ptr<const dtracker::audio::types::PCMDa
     // 3. Create the playback unit using the helper
     auto unit = dtracker::audio::playback::makePlaybackUnit(descriptor);
 
-    // 4. Move the unit to the mixer (preview)
+    // 4. Clear the mixer (stop sound)
+    m_engine.mixerUnit()->clear();
+
+    // 5. Move the unit to the mixer (preview)
     m_engine.mixerUnit()->addUnit(std::move(unit));
 }
-
-void Manager::handleCacheMiss(const QString &filePath)
-{
-
-}
-
-
 
 } // namespace Dtracker::Audio

@@ -41,6 +41,7 @@ SampleFacade::SampleFacade(QObject *parent)
             });
 
     connect(this, &SampleFacade::retrieveSample, m_managerWorker, &SampleManagerWorker::handleRetrieveSample);
+    connect (m_managerWorker, &SampleManagerWorker::sampleFound, this, &SampleFacade::handleSampleIsFound);
 
     // Start the worker thread's event loop.
     m_workerThread->start();
@@ -75,12 +76,7 @@ void SampleFacade::setAudioManager(Audio::Manager *manager)
             m_audioManager, &Audio::Manager::previewPCMData);
 
         connect(m_managerWorker, &SampleManagerWorker::cacheMiss,
-            m_audioManager, &Audio::Manager::handleCacheMiss);
-
-        connect(m_managerWorker, &SampleManagerWorker::cacheMiss,
                 m_audioManager, &Audio::Manager::startDecodingFile);
-
-        connect (m_managerWorker, &SampleManagerWorker::sampleFound, this, &SampleFacade::handleSampleIsFound);
 
         qDebug() << "audioManager property updated";
 
@@ -130,7 +126,12 @@ void SampleFacade::handleSampleAdded(int id, const QString& filePath)
 
 void SampleFacade::handleSampleIsFound(dtracker::sample::types::SampleDescriptor descriptor)
 {
-    m_audioManager->previewPCMData(std::move(descriptor.pcmData()), {descriptor.metadata().sourceSampleRate, descriptor.metadata().bitDepth, 2});
+    //m_audioManager->previewPCMData(std::move(descriptor.pcmData()), {descriptor.metadata().sourceSampleRate, descriptor.metadata().bitDepth, 2});
+
+    auto unit = dtracker::audio::playback::makePlaybackUnit(std::move(descriptor));
+
+    // Release the ownership or crash!
+    emit playbackSample(unit.release());
 }
 
 Audio::Manager* SampleFacade::audioManager() const

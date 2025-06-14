@@ -27,6 +27,7 @@ qt_add_qml_module(tracker
         pattern/pattern_step_model.h pattern/pattern_step_model.cpp
         sample/sample_facade.h sample/sample_facade.cpp
         sample/sample_manager_worker.h sample/sample_manager_worker.cpp
+        playback/playback_facade.h playback/playback_facade.cpp
 )
 
 target_include_directories(tracker PUBLIC
@@ -35,6 +36,7 @@ target_include_directories(tracker PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/sample
     ${CMAKE_CURRENT_SOURCE_DIR}/track
     ${CMAKE_CURRENT_SOURCE_DIR}/pattern
+    ${CMAKE_CURRENT_SOURCE_DIR}/playback
 )
 
 target_link_libraries(tracker

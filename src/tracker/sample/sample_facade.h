@@ -50,6 +50,8 @@ signals:
     void addSample(const QString& filePath);      // Asks the worker to register a new sample instance.
     void retrieveSample(int id);
 
+    void playbackSample(dtracker::audio::playback::SamplePlaybackUnit* unit);
+
 private slots:
     // --- Slots to handle results from the worker thread ---
     void handleSampleIsCached(const QString& filePath, bool isCached); // Continues the preview workflow after a cache check.
