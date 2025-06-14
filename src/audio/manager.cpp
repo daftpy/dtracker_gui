@@ -123,6 +123,7 @@ void Manager::onDecodingFinished(std::shared_ptr<const dtracker::audio::types::P
 
     // 3. Create the playback unit using the helper
     std::unique_ptr<dtracker::audio::playback::SamplePlaybackUnit> unit = dtracker::audio::playback::makePlaybackUnit(descriptor);
+
     // 4. Clear the mixer (stop sound)
     m_engine.mixerUnit()->clear();
 
