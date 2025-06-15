@@ -294,7 +294,7 @@ Window {
 
                         onPreviewSample: (sampleId) => {
                             console.log("Previewing sample");
-                            // audioManager.addSampleToTrack(sampleId, 0);
+
                             sampleFacade.previewSample(sampleId);
                         }
 

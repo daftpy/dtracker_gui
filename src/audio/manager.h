@@ -39,7 +39,6 @@ public:
 
     // QML-callable methods to control audio playback
     Q_INVOKABLE void startEngine();              // Start the audio engine
-    Q_INVOKABLE void addSampleToTrack(int sampleId, int trackId);
 
     dtracker::tracker::TrackManager* trackManager();
 

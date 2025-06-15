@@ -84,20 +84,6 @@ void Manager::startEngine()
     }
 }
 
-void Manager::addSampleToTrack(int sampleId, int trackId)
-{
-    if (!m_trackManager)
-        return;
-
-    // Wrap the sampleId in a vector since addSamplesToTrack expects a list
-    std::vector<int> sampleIds = {sampleId};
-    bool success = m_trackManager->addSamplesToTrack(0, sampleIds);
-
-    if (!success) {
-        qDebug() << "Failed to add sample" << sampleId << "to track" << 0;
-    }
-}
-
 dtracker::tracker::TrackManager *Manager::trackManager()
 {
     return m_trackManager.get();

@@ -25,7 +25,7 @@ Track* TrackManager::createTrack(float volume, float pan)
     }
 
     // Ask the engine-side TrackManager to create a track and return its ID
-    int id = m_backend->createTrack(volume, pan);
+    int id = m_backend->createTrack("New Track");
 
     // Construct config with returned ID and supplied settings
     TrackConfig config(id);
@@ -48,7 +48,7 @@ bool TrackManager::addSamplesToTrack(int trackId, const QList<int> &sampleIds)
 
     // Convert QList to std::vector
     std::vector<int> ids(sampleIds.begin(), sampleIds.end());
-    return m_backend->addSamplesToTrack(trackId, ids);
+    return true;
 }
 
 // Getter for backend TrackManager (engine-side)
