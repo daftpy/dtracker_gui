@@ -16,6 +16,34 @@ TrackListModel* TrackManager::model() const
     return m_model;
 }
 
+void TrackManager::handleTrackDataModified(Track *track)
+{
+    if (!m_backend || !track) {
+        return;
+    }
+
+    qDebug() << "Track" << track->id() << "data modified, syncing to backend...";
+
+    // 1. Get the TrackConfig from the GUI wrapper.
+    const TrackConfig& config = track->config();
+
+    // 2. Get the pattern steps from the Qt Model.
+    QList<int> qtSteps = track->patternModel()->steps();
+
+    // 3. Convert to the C++ backend format.
+    dtracker::tracker::types::ActivePattern cppPattern;
+    cppPattern.steps.assign(qtSteps.begin(), qtSteps.end());
+    // TODO: Get this from your model in the future.
+    cppPattern.stepIntervalMs = 250.0f;
+
+    std::vector<dtracker::tracker::types::ActivePattern> patterns_to_update;
+    patterns_to_update.push_back(cppPattern);
+
+    qDebug() << "Updating backend track manager patterns";
+    // 4. Call the backend function to update the data model.
+    m_backend->updateTrackPatterns(track->id(), patterns_to_update);
+}
+
 // Creates a new backend track and corresponding frontend Track object
 Track* TrackManager::createTrack(float volume, float pan)
 {
@@ -34,6 +62,11 @@ Track* TrackManager::createTrack(float volume, float pan)
 
     // Create the Track using the config
     auto* track = new Track(config, this);
+
+    connect(track, &Track::dataModified, this, [this, track]() mutable {
+        // ...call our handler and tell it which track to sync.
+        this->handleTrackDataModified(track);
+    });
 
     // Add it to the model
     m_model->addTrack(track);

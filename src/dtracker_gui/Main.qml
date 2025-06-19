@@ -39,10 +39,16 @@ Window {
             console.log("Sending too playbacck facade");
             playbackFacade.playbackSample(unit);
         }
+
+        onPlaybackSampleDescriptor: (descriptor) => {
+            playbackFacade.handlePlaybackSampleDescriptor(descriptor);
+        }
     }
 
     PlaybackFacade {
         engine: audioManager.engine
+        sampleManager: sampleFacade.manager
+        trackManager: trackManager.trackManager
         id: playbackFacade
     }
 
@@ -126,11 +132,12 @@ Window {
                             //     audioManager.playTrack();
                             // }
                             onSingleTapped: {
-                                let track = trackManager.model.get(0);
-                                if (track && track.patternModel) {
-                                    playbackTimer.patternModel = track.patternModel;
-                                    playbackTimer.start();
-                                }
+                                // let track = trackManager.model.get(0);
+                                // if (track && track.patternModel) {
+                                //     playbackTimer.patternModel = track.patternModel;
+                                //     playbackTimer.start();
+                                // }
+                                playbackFacade.playTrack(0);
                             }
                         }
                     }

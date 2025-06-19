@@ -67,6 +67,7 @@ signals:
     void volumeChanged();
     void panChanged();
     void sampleIdsChanged();
+    void dataModified();
 
 private:
     TrackConfig m_config;

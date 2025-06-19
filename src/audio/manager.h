@@ -62,7 +62,6 @@ private:
     dtracker::audio::Engine m_engine; // Core audio engine (wraps RtAudio)
     std::optional<Types::DeviceInfo> m_currentDeviceInfo; // Cached output device info
 
-    std::unique_ptr<dtracker::audio::PlaybackManager> m_playbackManager; // Manages active playback units
     std::unique_ptr<dtracker::tracker::TrackManager> m_trackManager;
 
     QThread* m_workerThread;

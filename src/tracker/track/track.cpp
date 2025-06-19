@@ -12,6 +12,8 @@ Track::Track(const TrackConfig& config, QObject* parent)
                 emit sampleIdsChanged();
             }
         });
+
+    connect(m_patternModel, &PatternStepModel::stepSet, this, &Track::dataModified);
 }
 
 int Track::id() const

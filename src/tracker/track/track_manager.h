@@ -7,6 +7,7 @@
 
 #include "track_list_model.h"
 #include <dtracker/tracker/track_manager.hpp>
+#include <dtracker/tracker/types.hpp>
 
 namespace Dtracker::Tracker {
 
@@ -44,6 +45,9 @@ signals:
     // Emitted when the engine-side TrackManager is changed
     void trackManagerChanged();
 
+public slots:
+    void handleTrackDataModified(Dtracker::Tracker::Track* track);
+
 private:
     // Holds the QML model of tracks
     TrackListModel* m_model;
@@ -55,6 +59,6 @@ private:
 } // namespace Dtracker::Tracker
 
 // Registers the TrackManager pointer type for QVariant/QML use
-Q_DECLARE_METATYPE(dtracker::tracker::TrackManager*)
+Q_DECLARE_METATYPE(dtracker::tracker::TrackManager)
 
 #endif // TRACKMANAGER_H

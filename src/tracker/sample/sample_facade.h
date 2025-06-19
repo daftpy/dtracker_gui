@@ -22,13 +22,15 @@ class SampleFacade : public QObject
 
     // Exposes the sample list to QML views.
     Q_PROPERTY(SampleRegistryModel* model READ model CONSTANT)
-
+    Q_PROPERTY(dtracker::sample::Manager* manager READ manager CONSTANT)
 public:
     explicit SampleFacade(QObject *parent = nullptr);
     ~SampleFacade();
 
     Dtracker::Audio::Manager* audioManager() const;
     void setAudioManager(Dtracker::Audio::Manager* manager);
+
+    dtracker::sample::Manager* manager();
 
     // QML-invokable command to begin asynchronous sample registration.
     Q_INVOKABLE void registerSample(const QString& filePath);
@@ -51,6 +53,7 @@ signals:
     void retrieveSample(int id);
 
     void playbackSample(dtracker::audio::playback::SamplePlaybackUnit* unit);
+    void playbackSampleDescriptor(dtracker::sample::types::SampleDescriptor descriptor);
 
 private slots:
     // --- Slots to handle results from the worker thread ---
@@ -69,5 +72,5 @@ private:
     SampleRegistryModel* m_sampleRegistry{new SampleRegistryModel(this)}; // The data model exposed to the UI.
 };
 }
-
+Q_DECLARE_METATYPE(dtracker::sample::Manager)
 #endif // SAMPLE_FACADE_H

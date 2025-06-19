@@ -39,6 +39,7 @@ bool PatternStepModel::setData(const QModelIndex& index, const QVariant& value, 
         // Update internal step with new sample ID
         m_steps[index.row()] = value.toInt();
 
+        qDebug() << "Row:" << index.row() << "set to" << SampleIdRole << value.toInt();
         // Notify any attached views that the data has changed
         emit dataChanged(index, index, {SampleIdRole});
 

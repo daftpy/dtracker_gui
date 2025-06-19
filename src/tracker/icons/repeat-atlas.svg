@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="48" viewBox="0 0 1024 256">
+    <defs>
+        <g id="repeatIconShape">
+            <path d="M24,128A72.08,72.08,0,0,1,96,56H204.69L194.34,45.66a8,8,0,0,1,11.32-11.32l24,24a8,8,0,0,1,0,11.32l-24,24a8,8,0,0,1-11.32-11.32L204.69,72H96a56.06,56.06,0,0,0-56,56,8,8,0,0,1-16,0Zm200-8a8,8,0,0,0-8,8,56.06,56.06,0,0,1-56,56H51.31l10.35-10.34a8,8,0,0,0-11.32-11.32l-24,24a8,8,0,0,0,0,11.32l24,24a8,8,0,0,0,11.32-11.32L51.31,200H160a72.08,72.08,0,0,0,72-72A8,8,0,0,0,224,120Z"></path>
+        </g>
+    </defs>
+
+    <use href="#repeatIconShape" fill="#cad3de" x="0" y="0" />
+
+    <use href="#repeatIconShape" fill="#007bff" x="256" y="0" />
+    <!--
+        Alternatively, using transform:
+        <use href="#folderIconShape" fill="#007bff" transform="translate(256, 0)" />
+    -->
+
+    <use href="#repeatIconShape" fill="#28a745" x="512" y="0" />
+    <!--
+        Alternatively, using transform:
+        <use href="#folderIconShape" fill="#28a745" transform="translate(512, 0)" />
+    -->
+
+    <use href="#repeatIconShape" fill="#dc3545" x="768" y="0" />
+    <!--
+        Alternatively, using transform:
+        <use href="#folderIconShape" fill="#dc3545" transform="translate(768, 0)" />
+    -->
+</svg>

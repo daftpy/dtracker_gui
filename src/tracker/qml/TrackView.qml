@@ -18,7 +18,7 @@ Item {
         color: "#bdc2c9"
         border.color: "#b7bcc4"
         border.width: 1
-        radius: 6
+        radius: 3
 
         ColumnLayout {
             anchors.fill: parent

@@ -84,6 +84,11 @@ void SampleFacade::setAudioManager(Audio::Manager *manager)
     }
 }
 
+dtracker::sample::Manager *SampleFacade::manager()
+{
+    return m_sampleManager.get();
+}
+
 // Public API to begin the asynchronous sample registration process.
 void SampleFacade::registerSample(const QString &filePath)
 {
@@ -126,12 +131,13 @@ void SampleFacade::handleSampleAdded(int id, const QString& filePath)
 
 void SampleFacade::handleSampleIsFound(dtracker::sample::types::SampleDescriptor descriptor)
 {
-    //m_audioManager->previewPCMData(std::move(descriptor.pcmData()), {descriptor.metadata().sourceSampleRate, descriptor.metadata().bitDepth, 2});
-
-    auto unit = dtracker::audio::playback::makePlaybackUnit(std::move(descriptor));
+    // OLD TODO: REFACTORING AWAY
+    // auto unit = dtracker::audio::playback::makePlaybackUnit(std::move(descriptor));
 
     // Release the ownership or crash!
-    emit playbackSample(unit.release());
+    // emit playbackSample(unit.release());
+
+    emit playbackSampleDescriptor(std::move(descriptor));
 }
 
 Audio::Manager* SampleFacade::audioManager() const

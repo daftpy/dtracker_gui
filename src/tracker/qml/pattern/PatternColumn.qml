@@ -17,7 +17,7 @@ Column {
             width: 24
             height: 24
             color: model.sampleId === -1 ? "#333" : "#1c6bd4"
-            border.color: "white"
+            border.color: "#9ba1a8"
 
             TextInput {
                 id: stepInput
@@ -38,7 +38,7 @@ Column {
                     let number = parseInt(stepInput.text);
                     if (!isNaN(number)) {
                         root.model.setStep(index, number);
-                        console.log("Setting step", step, "id", number);
+                        console.log("Setting step", index, "id", number);
                     }
                 }
             }

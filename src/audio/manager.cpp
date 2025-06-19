@@ -14,11 +14,10 @@ Manager::Manager(QObject *parent)
     // Create DeviceManager using the engine's internal RtAudio instance
     dtracker::audio::DeviceManager dm = m_engine.createDeviceManager();
 
-    // Create the track manager, responsible for creating tracks in memory
+    // --- Create all the core C++ backend services ---
+    // Note: m_engine is already a member, so no need to create it here.
+    // We now create the other managers that will be shared.
     m_trackManager = std::make_unique<dtracker::tracker::TrackManager>();
-
-    // Create the PlaybackManager, responsible for routing decoded samples to the engine
-    m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(&m_engine);
 
     // Attempt to find and set a valid output device
     if (dm.currentDeviceInfo().has_value()) {
