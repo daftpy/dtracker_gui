@@ -11,6 +11,7 @@ qt_add_qml_module(tracker
         "icons/stop-fill-atlas.svg"
         "icons/play-fill-atlas.svg"
         "icons/pause-fill-atlas.svg"
+        "icons/repeat-atlas.svg"
     QML_FILES
         qml/TrackView.qml
         qml/PlaybackTimer.qml

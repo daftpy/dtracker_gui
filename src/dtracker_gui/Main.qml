@@ -81,18 +81,20 @@ Window {
         // Playback Bar Background
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: 42
+            Layout.preferredHeight: playbackNavigation.implicitHeight + 12
 
             Layout.leftMargin: 4
             Layout.rightMargin: 4
             Layout.topMargin: 6
             Layout.bottomMargin: 2
-            radius: 2
-
+            radius: 3
+            border.width: 1
+            border.color: "#56585c"
             color: "#272a2e"
 
             // Playback Navigation
             RowLayout {
+                id: playbackNavigation
                 anchors.fill: parent
                 anchors.leftMargin: 6
                 anchors.rightMargin: 6
@@ -101,26 +103,46 @@ Window {
                     id: playbackComponents
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    spacing: 4
 
-                    Image {
-                        id: playTrackIcon
+                    Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
+                        width: playTrackIcon.width + 10
+                        height: playTrackIcon.height + 10
+                        radius: 2
+                        // color: "#3f4145"
+                        border.width: 1
+                        border.color: "#56585c"
+                        gradient: LinearGradient {
+                            x1: 0
+                            x2: 0
+                            y1: 0
+                            y2: 300
+                            stops: [
+                                GradientStop { position: 0.0; color: playTrackTapHandler.pressed ? "#242629" : "#46474a" },
+                                GradientStop { position: 1.0; color: playTrackIconHoverHandler.hovered ? "#242629" : "#141517" }
+                            ]
+                        }
 
-                        // atlast positions for different icon state
-                        property var inactive: Qt.rect(0, 0, 80, 80)
-                        property var hovered: Qt.rect(72, 0, 80, 80)
+                        Image {
+                            id: playTrackIcon
+                            anchors.centerIn: parent
 
-                        source: "tracker/icons/play-fill-atlas.svg"
+                            // atlast positions for different icon state
+                            property var inactive: Qt.rect(2, 0, 54, 54)
+                            property var hovered: Qt.rect(110, 0, 54, 54)
 
-                        width: 24
-                        height: 24
-                        // Scale the svg down
-                        sourceSize.width: 192
-                        sourceSize.height: 48
-                        // Use a clip to only show a section of the atlas
-                        sourceClipRect: playbackTimer.running ? hovered : playTrackIconHoverHandler.hovered ? hovered : inactive
-                        antialiasing: true
+                            source: "tracker/icons/play-fill-atlas.svg"
 
+                            width: 18
+                            height: 18
+                            // Scale the svg down
+                            sourceSize.width: width * 8
+                            sourceSize.height: height * 2
+                            // Use a clip to only show a section of the atlas
+                            sourceClipRect: playbackTimer.running ? hovered : playTrackIconHoverHandler.hovered ? hovered : inactive
+                            antialiasing: true
+                        }
                         HoverHandler {
                             id: playTrackIconHoverHandler
 
@@ -128,6 +150,7 @@ Window {
                         }
 
                         TapHandler {
+                            id: playTrackTapHandler
                             // onSingleTapped: {
                             //     audioManager.playTrack();
                             // }
@@ -142,24 +165,44 @@ Window {
                         }
                     }
 
-                    Image {
-                        id: stopTrackIcon
+                    Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
+                        width: stopTrackIcon.width + 10
+                        height: stopTrackIcon.height + 10
+                        radius: 2
+                        //color: "#3f4145"
+                        border.width: 1
+                        border.color: "#56585c"
 
-                        // atlast positions for different icon state
-                        property var inactive: Qt.rect(0, 0, 80, 80)
-                        property var hovered: Qt.rect(144, 0, 80, 80)
+                        gradient: LinearGradient {
+                            x1: 0
+                            x2: 0
+                            y1: 0
+                            y2: 300
+                            stops: [
+                                GradientStop { position: 0.0; color: stopTrackTapHandler.pressed ? "#242629" : "#46474a" },
+                                GradientStop { position: 1.0; color: stopTrackIconHoverHandler.hovered ? "#242629" : "#141517" }
+                            ]
+                        }
+                        Image {
+                            id: stopTrackIcon
+                            anchors.centerIn: parent
 
-                        source: "tracker/icons/stop-fill-atlas.svg"
+                            // atlast positions for different icon state
+                            property var inactive: Qt.rect(0, 0, 54, 54)
+                            property var hovered: Qt.rect(162, 0, 54, 54)
 
-                        width: 24
-                        height: 24
-                        // Scale the svg down
-                        sourceSize.width: 192
-                        sourceSize.height: 48
-                        // Use a clip to only show a section of the atlas
-                        sourceClipRect: stopTrackIconHoverHandler.hovered ? hovered : inactive
-                        antialiasing: true
+                            source: "tracker/icons/stop-fill-atlas.svg"
+
+                            width: 18
+                            height: 18
+                            // Scale the svg down
+                            sourceSize.width: width * 8
+                            sourceSize.height: height * 2
+                            // Use a clip to only show a section of the atlas
+                            sourceClipRect: stopTrackIconHoverHandler.hovered ? hovered : inactive
+                            antialiasing: true
+                        }
 
                         HoverHandler {
                             id: stopTrackIconHoverHandler
@@ -168,8 +211,61 @@ Window {
                         }
 
                         TapHandler {
+                            id: stopTrackTapHandler
                             onSingleTapped: {
                                 playbackTimer.stop();
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        width: stopTrackIcon.width + 10
+                        height: stopTrackIcon.height + 10
+                        radius: 2
+                        border.width: 1
+                        border.color: "#56585c"
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        gradient: LinearGradient {
+                            x1: 0
+                            x2: 0
+                            y1: 0
+                            y2: 300
+                            stops: [
+                                GradientStop { position: 0.0; color: repeatPlaybackTapHandler.pressed ? "#242629" : "#46474a" },
+                                GradientStop { position: 1.0; color: repeatPlaybackHoverHandler.hovered ? "#242629" : "#141517" }
+                            ]
+                        }
+
+                        Image {
+                            id: repeatPlayback
+                            anchors.centerIn: parent
+
+                            // atlast positions for different icon state
+                            property var inactive: Qt.rect(0, 0, 54, 54)
+                            property var hovered: Qt.rect(54, 0, 54, 54)
+
+                            source: "tracker/icons/repeat-atlas.svg"
+
+                            width: 18
+                            height: 18
+                            // Scale the svg down
+                            sourceSize.width: width * 8
+                            sourceSize.height: height * 2
+                            // Use a clip to only show a section of the atlas
+                            sourceClipRect: repeatPlaybackHoverHandler.hovered ? hovered : inactive
+                            antialiasing: true
+                        }
+                        HoverHandler {
+                            id: repeatPlaybackHoverHandler
+
+                            cursorShape: Qt.PointingHandCursor
+                        }
+
+                        TapHandler {
+                            id: repeatPlaybackTapHandler
+                            onSingleTapped: {
+                                trackManager.createTrack();
                             }
                         }
                     }
@@ -177,45 +273,54 @@ Window {
 
                 // Add Track Button
                 Rectangle {
-                    width: addTrackIcon.width
-                    height: addTrackIcon.height
-                    color: "transparent"
+                    width: stopTrackIcon.width + 10
+                    height: stopTrackIcon.height + 10
+                    radius: 2
+                    border.width: 1
+                    border.color: "#56585c"
                     Layout.alignment: Qt.AlignVCenter
+
+                    gradient: LinearGradient {
+                        x1: 0
+                        x2: 0
+                        y1: 0
+                        y2: 300
+                        stops: [
+                            GradientStop { position: 0.0; color: addTrackTapHandler.pressed ? "#242629" : "#46474a" },
+                            GradientStop { position: 1.0; color: addTrackHoverHandler.hovered ? "#242629" : "#141517" }
+                        ]
+                    }
 
                     Image {
                         id: addTrackIcon
                         anchors.centerIn: parent
 
                         // atlast positions for different icon state
-                        property var inactive: Qt.rect(0, 0, 80, 80)
-                        property var hovered: Qt.rect(72, 0, 80, 80)
+                        property var inactive: Qt.rect(0, 0, 54, 54)
+                        property var hovered: Qt.rect(54, 0, 54, 54)
 
                         source: "tracker/icons/plus-square-fill-atlas.svg"
 
-                        width: 24
-                        height: 24
+                        width: 18
+                        height: 18
                         // Scale the svg down
-                        sourceSize.width: 192
-                        sourceSize.height: 48
+                        sourceSize.width: width * 8
+                        sourceSize.height: height * 2
                         // Use a clip to only show a section of the atlas
-                        sourceClipRect: addTrackIconHoverHandler.hovered ? hovered : inactive
+                        sourceClipRect: addTrackHoverHandler.hovered ? hovered : inactive
                         antialiasing: true
+                    }
+                    HoverHandler {
+                        id: addTrackHoverHandler
 
-                        HoverHandler {
-                            id: addTrackIconHoverHandler
-
-                            cursorShape: Qt.PointingHandCursor
-                        }
-
-                        TapHandler {
-                            onSingleTapped: {
-                                trackManager.createTrack();
-                            }
-                        }
+                        cursorShape: Qt.PointingHandCursor
                     }
 
-                    Component.onCompleted: {
-                        console.log("addTrackIconContainer:", width, "x", height);
+                    TapHandler {
+                        id: addTrackTapHandler
+                        onSingleTapped: {
+                            trackManager.createTrack();
+                        }
                     }
                 }
             }

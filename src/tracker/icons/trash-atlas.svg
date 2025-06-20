@@ -5,9 +5,9 @@
         </g>
     </defs>
 
-    <use href="#trashIconShape" fill="#cad3de" x="0" y="0" />
+    <use href="#trashIconShape" fill="#d8e0eb" x="0" y="0" />
 
-    <use href="#trashIconShape" fill="#007bff" x="256" y="0" />
+    <use href="#trashIconShape" fill="#009dff" x="256" y="0" />
     <!--
         Alternatively, using transform:
         <use href="#folderIconShape" fill="#007bff" transform="translate(256, 0)" />
