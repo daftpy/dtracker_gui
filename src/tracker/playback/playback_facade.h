@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QQmlEngine>
+#include <QTimer>
 #include <memory>
 #include <dtracker/audio/engine.hpp>
 #include <dtracker/audio/playback_manager.hpp>
@@ -18,6 +19,8 @@ class PlaybackFacade : public QObject
     Q_PROPERTY(dtracker::audio::Engine* engine READ engine WRITE setEngine NOTIFY engineChanged)
     Q_PROPERTY(dtracker::sample::Manager* sampleManager READ sampleManager WRITE setSampleManager NOTIFY sampleManagerChanged)
     Q_PROPERTY(dtracker::tracker::TrackManager* trackManager READ trackManager WRITE setTrackManager NOTIFY trackManagerChanged)
+    Q_PROPERTY(bool loopPlayback READ loopPlayback WRITE setLoopPlayback NOTIFY loopPlaybackChanged)
+    Q_PROPERTY(bool isPlaying READ isPlaying NOTIFY isPlayingChanged)
 public:
     explicit PlaybackFacade(QObject *parent = nullptr);
 
@@ -30,23 +33,36 @@ public:
     dtracker::tracker::TrackManager* trackManager() const { return m_trackManager; };
     void setTrackManager(dtracker::tracker::TrackManager* manager);
 
+    bool loopPlayback() const;
+    void setLoopPlayback(bool shouldLoop);
+
+    bool isPlaying() const;
+
     Q_INVOKABLE void playbackSample(dtracker::audio::playback::SamplePlaybackUnit* unit);
 
     Q_INVOKABLE void playTrack(int id);
 
-    // TODO: stop playback
+    Q_INVOKABLE void stopPlayback();
 
 signals:
     void engineChanged();
     void sampleManagerChanged();
     void trackManagerChanged();
+    void loopPlaybackChanged();
+    void isPlayingChanged();
 
 public slots:
     void handlePlaybackSample(dtracker::audio::playback::SamplePlaybackUnit* unit);
 
     void handlePlaybackSampleDescriptor(dtracker::sample::types::SampleDescriptor descriptor);
 
+    void handleIsPlayingChanged();
+
 private:
+    void updateIsPlayingState();
+    bool m_cachedIsPlaying{false};
+    QTimer* m_playbackStatePoller{new QTimer(this)};
+
     dtracker::audio::Engine* m_engine{nullptr};
     dtracker::sample::Manager* m_sampleManager{nullptr};
     dtracker::tracker::TrackManager* m_trackManager{nullptr};

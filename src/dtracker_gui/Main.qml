@@ -140,7 +140,7 @@ Window {
                             sourceSize.width: width * 8
                             sourceSize.height: height * 2
                             // Use a clip to only show a section of the atlas
-                            sourceClipRect: playbackTimer.running ? hovered : playTrackIconHoverHandler.hovered ? hovered : inactive
+                            sourceClipRect: playbackFacade.isPlaying ? hovered : playTrackIconHoverHandler.hovered ? hovered : inactive
                             antialiasing: true
                         }
                         HoverHandler {
@@ -213,7 +213,7 @@ Window {
                         TapHandler {
                             id: stopTrackTapHandler
                             onSingleTapped: {
-                                playbackTimer.stop();
+                                playbackFacade.stopPlayback();
                             }
                         }
                     }
@@ -232,7 +232,7 @@ Window {
                             y1: 0
                             y2: 300
                             stops: [
-                                GradientStop { position: 0.0; color: repeatPlaybackTapHandler.pressed ? "#242629" : "#46474a" },
+                                GradientStop { position: 0.0; color: playbackFacade.loopPlayback ? "#242629" : repeatPlaybackTapHandler.pressed ? "#242629" : "#46474a" },
                                 GradientStop { position: 1.0; color: repeatPlaybackHoverHandler.hovered ? "#242629" : "#141517" }
                             ]
                         }
@@ -253,7 +253,7 @@ Window {
                             sourceSize.width: width * 8
                             sourceSize.height: height * 2
                             // Use a clip to only show a section of the atlas
-                            sourceClipRect: repeatPlaybackHoverHandler.hovered ? hovered : inactive
+                            sourceClipRect: playbackFacade.loopPlayback ? hovered : repeatPlaybackHoverHandler.hovered ? hovered : inactive
                             antialiasing: true
                         }
                         HoverHandler {
@@ -265,7 +265,7 @@ Window {
                         TapHandler {
                             id: repeatPlaybackTapHandler
                             onSingleTapped: {
-                                trackManager.createTrack();
+                                playbackFacade.loopPlayback = !playbackFacade.loopPlayback
                             }
                         }
                     }

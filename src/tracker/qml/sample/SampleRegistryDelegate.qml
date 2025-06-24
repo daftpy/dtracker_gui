@@ -129,7 +129,7 @@ Item {
         TapHandler {
             id: listViewTapHandler
 
-            onSingleTapped: {
+            onDoubleTapped: {
                 root.previewSample(root.id);
             }
         }

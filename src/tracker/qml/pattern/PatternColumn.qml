@@ -39,6 +39,9 @@ Column {
                     if (!isNaN(number)) {
                         root.model.setStep(index, number);
                         console.log("Setting step", index, "id", number);
+                    } else {
+                        root.model.setStep(index, -1);
+                        text = "";
                     }
                 }
             }
