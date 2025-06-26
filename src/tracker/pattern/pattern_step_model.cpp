@@ -6,7 +6,7 @@ namespace Dtracker::Tracker {
 PatternStepModel::PatternStepModel(QObject* parent)
     : QAbstractListModel(parent)
 {
-    m_steps.fill(-1, 16);  // 16 steps initialized to -1 (empty)
+    m_steps.fill(-1, 32);  // 64 steps initialized to -1 (empty)
 }
 
 // Returns the number of steps in the pattern

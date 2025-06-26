@@ -18,7 +18,7 @@ Item {
         color: "#bdc2c9"
         border.color: "#b7bcc4"
         border.width: 1
-        radius: 3
+        radius: 2
 
         ColumnLayout {
             anchors.fill: parent
@@ -29,7 +29,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: trackTitle.implicitHeight + 12
                 color: "#191d21"
-                radius: 3
+                radius: 2
                 Row {
                     anchors.fill: parent
                     anchors.margins: 8

@@ -21,6 +21,7 @@ class PlaybackFacade : public QObject
     Q_PROPERTY(dtracker::tracker::TrackManager* trackManager READ trackManager WRITE setTrackManager NOTIFY trackManagerChanged)
     Q_PROPERTY(bool loopPlayback READ loopPlayback WRITE setLoopPlayback NOTIFY loopPlaybackChanged)
     Q_PROPERTY(bool isPlaying READ isPlaying NOTIFY isPlayingChanged)
+    Q_PROPERTY(float bpm READ bpm NOTIFY bpmChanged)
 public:
     explicit PlaybackFacade(QObject *parent = nullptr);
 
@@ -36,6 +37,8 @@ public:
     bool loopPlayback() const;
     void setLoopPlayback(bool shouldLoop);
 
+    float bpm() const;
+
     bool isPlaying() const;
 
     Q_INVOKABLE void playbackSample(dtracker::audio::playback::SamplePlaybackUnit* unit);
@@ -44,12 +47,15 @@ public:
 
     Q_INVOKABLE void stopPlayback();
 
+    Q_INVOKABLE void changeBpm(float value);
+
 signals:
     void engineChanged();
     void sampleManagerChanged();
     void trackManagerChanged();
     void loopPlaybackChanged();
     void isPlayingChanged();
+    void bpmChanged();
 
 public slots:
     void handlePlaybackSample(dtracker::audio::playback::SamplePlaybackUnit* unit);

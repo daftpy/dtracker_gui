@@ -112,14 +112,14 @@ Window {
                         radius: 2
                         // color: "#3f4145"
                         border.width: 1
-                        border.color: "#56585c"
+                        border.color: "#3d3f42"
                         gradient: LinearGradient {
                             x1: 0
                             x2: 0
                             y1: 0
                             y2: 300
                             stops: [
-                                GradientStop { position: 0.0; color: playTrackTapHandler.pressed ? "#242629" : "#46474a" },
+                                GradientStop { position: 0.0; color: playbackFacade.isPlaying ? "#242629" : playTrackTapHandler.pressed ? "#242629" : "#46474a" },
                                 GradientStop { position: 1.0; color: playTrackIconHoverHandler.hovered ? "#242629" : "#141517" }
                             ]
                         }
@@ -172,7 +172,7 @@ Window {
                         radius: 2
                         //color: "#3f4145"
                         border.width: 1
-                        border.color: "#56585c"
+                        border.color: "#3d3f42"
 
                         gradient: LinearGradient {
                             x1: 0
@@ -200,7 +200,7 @@ Window {
                             sourceSize.width: width * 8
                             sourceSize.height: height * 2
                             // Use a clip to only show a section of the atlas
-                            sourceClipRect: stopTrackIconHoverHandler.hovered ? hovered : inactive
+                            sourceClipRect: playbackFacade.isPlaying ? hovered : stopTrackIconHoverHandler.hovered ? hovered : inactive
                             antialiasing: true
                         }
 
@@ -223,7 +223,7 @@ Window {
                         height: stopTrackIcon.height + 10
                         radius: 2
                         border.width: 1
-                        border.color: "#56585c"
+                        border.color: "#3d3f42"
                         anchors.verticalCenter: parent.verticalCenter
 
                         gradient: LinearGradient {
@@ -269,6 +269,173 @@ Window {
                             }
                         }
                     }
+
+                    FontLoader {
+                        id: fontLoader
+                        source: "tracker/fonts/DSEG7ClassicMini-Regular.ttf"
+                    }
+
+                    Item {
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: parent.implicitHeight
+                        width: bpmMetrics.advanceWidth + 6
+
+                        Rectangle {
+                            height: parent.height
+                            width: parent.width
+                            radius: 2
+                            color: "#c0c9b7"
+                        }
+
+                        Text {
+                            anchors.centerIn: parent
+                            id: bpm
+                            width: parent.width
+                            text: playbackFacade.bpm
+                            font.family: fontLoader.font.family
+                            horizontalAlignment: Text.AlignRight
+                            color: "#242426"
+                            font.pointSize: parent.height * .6
+                        }
+
+                        TextMetrics {
+                            id: bpmMetrics
+                            text: "120"
+                            font.family: bpm.font.family
+                            font.pointSize: bpm.font.pointSize
+                        }
+
+                        Rectangle {
+                            height: parent.height
+                            width: parent.width
+                            radius: 2
+                            border.width: 1
+                            border.color: "#545f6e"
+                            opacity: 0.5
+
+                            gradient: LinearGradient {
+                                x1: 0
+                                x2: 0
+                                y1: 0
+                                y2: 300
+                                stops: [
+                                    GradientStop { position: 0.1; color: "#edebeb" },
+                                    GradientStop { position: 0.5; color: "transparent" }
+                                ]
+                            }
+                        }
+
+                    }
+
+                    Column {
+                        id: bpmControls
+                        height: parent.implicitHeight
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 2
+
+                        Rectangle {
+                            id: increaseBPMbutton
+                            width: 18
+                            height: parent.height / 2 - 2
+                            radius: 2
+                            border.width: 1
+                            border.color: "#56585c"
+
+                            gradient: LinearGradient {
+                                x1: 0
+                                x2: 0
+                                y1: 0
+                                y2: 300
+                                stops: [
+                                    GradientStop { position: 0.0; color: "#525252" },
+                                    GradientStop { position: 0.5; color: "#292929" }
+                                ]
+                            }
+
+                            Image {
+                                id: increase
+                                anchors.centerIn: parent
+
+                                // atlast positions for different icon state
+                                property var inactive: Qt.rect(0, 0, 30, 30)
+                                property var hovered: Qt.rect(30, 0, 30, 30)
+
+                                source: "tracker/icons/arrow-fat-up-fill-atlas.svg"
+
+                                width: 10
+                                height: 10
+                                // Scale the svg down
+                                sourceSize.width: width * 8
+                                sourceSize.height: height * 2
+                                // Use a clip to only show a section of the atlas
+                                sourceClipRect: increaseHoverHandler.hovered ? hovered : inactive
+                                antialiasing: true
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    playbackFacade.changeBpm(1);
+                                }
+                            }
+
+                            HoverHandler {
+                                id: increaseHoverHandler
+                                cursorShape: Qt.PointingHandCursor
+                            }
+                        }
+                        Rectangle {
+                            id: decreaseBPMbutton
+                            width: 18
+                            height: parent.height / 2 - 2
+                            radius: 2
+                            border.width: 1
+                            border.color: "#56585c"
+
+                            gradient: LinearGradient {
+                                x1: 0
+                                x2: 0
+                                y1: 0
+                                y2: 300
+                                stops: [
+                                    GradientStop { position: 1.0; color: "#525252" },
+                                    GradientStop { position: 0.2; color: "#292929" }
+                                ]
+                            }
+
+                            Image {
+                                id: decrease
+                                anchors.centerIn: parent
+
+                                // atlast positions for different icon state
+                                property var inactive: Qt.rect(0, 0, 30, 30)
+                                property var hovered: Qt.rect(30, 0, 30, 30)
+
+                                source: "tracker/icons/arrow-fat-down-fill-atlas.svg"
+
+                                width: 10
+                                height: 10
+                                // Scale the svg down
+                                sourceSize.width: width * 8
+                                sourceSize.height: height * 2
+                                // Use a clip to only show a section of the atlas
+                                sourceClipRect: decreaseHoverHandler.hovered ? hovered : inactive
+                                antialiasing: true
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    playbackFacade.changeBpm(-1);
+                                }
+                            }
+
+                            HoverHandler {
+                                id: decreaseHoverHandler
+                                cursorShape: Qt.PointingHandCursor
+                            }
+                        }
+                    }
                 }
 
                 // Add Track Button
@@ -277,7 +444,7 @@ Window {
                     height: stopTrackIcon.height + 10
                     radius: 2
                     border.width: 1
-                    border.color: "#56585c"
+                    border.color: "#3d3f42"
                     Layout.alignment: Qt.AlignVCenter
 
                     gradient: LinearGradient {

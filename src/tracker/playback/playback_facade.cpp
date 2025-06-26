@@ -17,6 +17,7 @@ void PlaybackFacade::setEngine(dtracker::audio::Engine *engine)
         if (m_engine != nullptr && m_sampleManager != nullptr && m_trackManager != nullptr) {
             qDebug() << "PlaybackManager initialized set";
             m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(m_engine, m_sampleManager, m_trackManager);
+            emit bpmChanged();
         }
     }
 }
@@ -32,6 +33,7 @@ void PlaybackFacade::setSampleManager(dtracker::sample::Manager *manager)
         if (m_engine != nullptr && m_sampleManager != nullptr && m_trackManager != nullptr) {
             qDebug() << "PlaybackManager initialized set";
             m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(m_engine, m_sampleManager, m_trackManager);
+            emit bpmChanged();
         }
     }
 }
@@ -47,6 +49,7 @@ void PlaybackFacade::setTrackManager(dtracker::tracker::TrackManager *manager)
         if (m_engine != nullptr && m_sampleManager != nullptr && m_trackManager != nullptr) {
             qDebug() << "PlaybackManager initialized set";
             m_playbackManager = std::make_unique<dtracker::audio::PlaybackManager>(m_engine, m_sampleManager, m_trackManager);
+            emit bpmChanged();
         }
     }
 }
@@ -65,6 +68,15 @@ void PlaybackFacade::setLoopPlayback(bool shouldLoop)
         m_playbackManager->setLoopPlayback(shouldLoop);
         emit loopPlaybackChanged();
     }
+}
+
+float PlaybackFacade::bpm() const
+{
+    if (m_playbackManager != nullptr)
+    {
+        return m_playbackManager->bpm();
+    }
+    return 0;
 }
 
 bool PlaybackFacade::isPlaying() const
@@ -96,6 +108,15 @@ void PlaybackFacade::stopPlayback()
     if (m_playbackManager != nullptr)
     {
         m_playbackManager->stopPlayback();
+    }
+}
+
+void PlaybackFacade::changeBpm(float value)
+{
+    if (m_playbackManager != nullptr)
+    {
+        m_playbackManager->setBpm(m_playbackManager->bpm() + value);
+        emit bpmChanged();
     }
 }
 

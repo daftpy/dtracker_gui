@@ -1,25 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="192" height="48" viewBox="0 0 1024 256">
     <defs>
-        <g id="plusSquareFillIconShape">
-            <path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path>
+        <g id="arrowFatFillIconShape">
+            <path d="M231.39,123.06A8,8,0,0,1,224,128H184v80a16,16,0,0,1-16,16H88a16,16,0,0,1-16-16V128H32a8,8,0,0,1-5.66-13.66l96-96a8,8,0,0,1,11.32,0l96,96A8,8,0,0,1,231.39,123.06Z"></path>
         </g>
     </defs>
 
-    <use href="#plusSquareFillIconShape" fill="#d8e0eb" x="0" y="0" />
+    <use href="#arrowFatFillIconShape" fill="#d8e0eb" x="0" y="0" />
 
-    <use href="#plusSquareFillIconShape" fill="#009dff" x="256" y="0" />
+    <use href="#arrowFatFillIconShape" fill="#009dff" x="256" y="0" />
     <!--
         Alternatively, using transform:
         <use href="#folderIconShape" fill="#007bff" transform="translate(256, 0)" />
     -->
 
-    <use href="#plusSquareFillIconShape" fill="#1cc766" x="512" y="0" />
+    <use href="#arrowFatFillIconShape" fill="#1cc766" x="512" y="0" />
     <!--
         Alternatively, using transform:
         <use href="#folderIconShape" fill="#28a745" transform="translate(512, 0)" />
     -->
 
-    <use href="#plusSquareFillIconShape" fill="#dc3545" x="768" y="0" />
+    <use href="#arrowFatFillIconShape" fill="#dc3545" x="768" y="0" />
     <!--
         Alternatively, using transform:
         <use href="#folderIconShape" fill="#dc3545" transform="translate(768, 0)" />

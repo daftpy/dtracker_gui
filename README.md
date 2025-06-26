@@ -6,6 +6,10 @@ A simple Qt Quick graphical frontend for the [dtracker_engine](https://github.co
 
 This GUI project connects to the `dtracker_engine` library and displays device information such as the name, output channels, and sample rate in a QML-friendly interface.
 
+## Screenshot
+
+![Screenshot of Dtracker](images/screenshot.png)
+
 ## Features
 
 - Auto-starts and initializes audio engine
