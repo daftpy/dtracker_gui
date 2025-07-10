@@ -7,9 +7,10 @@ This project serves as the user-facing application that leverages the `dtracker_
 
 The application allows users to browse their file system for audio samples, manage a registry of loaded sounds, sequence those sounds in a multi-track pattern editor, and control playback with features like looping and dynamic tempo adjustment.
 
-## Screenshot
+## Demo
 
-![Screenshot of Dtracker](images/screenshot.png)
+https://github.com/user-attachments/assets/725101a5-9d44-42af-a322-fc42357808da
+
 
 
 ## Core Features & Architecture
