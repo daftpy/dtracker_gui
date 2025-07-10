@@ -26,7 +26,7 @@ The GUI is built using modern C++ and Qt 6 principles, emphasizing a decoupled a
 -   **Live Audio Visualization:** The GUI features a live, real-time oscilloscope display of the master audio output. This is achieved by:
     1.  "Tapping" the final mixed audio on the real-time audio thread in the C++ engine.
     2.  Safely passing this data to the GUI thread using a high-performance, lock-free SPSC queue.
-    3.  Polling the queue with a `QTimer` and drawing the wavefo
+    3.  Polling the queue with a `QTimer` and drawing the master audio waveform, ensuring a smooth, responsive visualization without impacting audio performance.
 ## Requirements
 
 - Qt 6.8.1
@@ -44,13 +44,8 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug
 cmake --build . --config Debug
 ```
 
-## Run
-
-```bash
-./build/appdtracker_gui
-```
-
 ## Notes
 
 The audio engine library is automatically fetched via `FetchContent` and does not require a manual clone step.
+
 
