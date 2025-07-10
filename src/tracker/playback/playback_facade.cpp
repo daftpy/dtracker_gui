@@ -1,4 +1,5 @@
 #include "playback_facade.h"
+#include <dtracker/audio/playback/buffer_pool.hpp>
 #include <QDebug>
 
 PlaybackFacade::PlaybackFacade(QObject *parent)
@@ -120,6 +121,11 @@ void PlaybackFacade::changeBpm(float value)
     }
 }
 
+QVariantList PlaybackFacade::waveformData() const
+{
+    return m_waveformData;
+}
+
 void PlaybackFacade::handlePlaybackSample(dtracker::audio::playback::SamplePlaybackUnit *unit)
 {
     playbackSample(unit);
@@ -143,10 +149,65 @@ void PlaybackFacade::updateIsPlayingState()
 {
     if (!m_playbackManager) return;
 
+    // Get the current playstate from the manager
     bool current = m_playbackManager->isPlaying();
+
+    // Update the value if necessary
     if (current != m_cachedIsPlaying) {
         m_cachedIsPlaying = current;
-        qDebug() << "Is playing changed! :" << m_cachedIsPlaying;
         emit isPlayingChanged();
+    }
+
+    // If playback has stopped, stop polling the playback state
+    if (!current) {
+        m_playbackStatePoller->stop();
+    }
+
+    // --- Waveform Logic ---
+    // Get the master mixer waveform data
+    auto* queue = m_playbackManager->getMasterWaveformQueue();
+    // No data, return
+    if (!queue) return;
+
+    QList<QVariant> newPeaks;
+
+    // The queue now holds the shared_ptr objects directly.
+    // Use try_pop() to get the object and remove it in one step.
+    while (auto* bufferPtrPtr = queue->front()) // bufferPtrPtr is a raw pointer to a shared_ptr
+    {
+        // 1. Dereference the raw pointer to get the shared_ptr.
+        //    We use std::move to efficiently transfer ownership out of the queue.
+        dtracker::audio::playback::BufferPool::PooledBufferPtr& bufferPtr = *bufferPtrPtr;
+
+        // 2. Now that we have ownership, pop the raw pointer from the queue.
+        queue->pop();
+
+        // 'bufferPtr' is now a PooledBufferPtr, aliasing a std::shared_ptr<PCMData>.
+        // When it goes out of scope at the end of this loop, it will automatically
+        // return the raw buffer to the BufferPool.
+        float minPeak = 0.0f;
+        float maxPeak = 0.0f;
+        // Dereference the shared_ptr to get the vector for the loop.
+        for (float sample : *bufferPtr) {
+            if (sample < minPeak) minPeak = sample;
+            if (sample > maxPeak) maxPeak = sample;
+        }
+
+        qDebug() << "Received Waveform Peak:" << minPeak << maxPeak;
+        newPeaks.append(QVariant::fromValue(QList<qreal>{(qreal)minPeak, (qreal)maxPeak}));
+    }
+    qDebug() << "Done receiving waveform";
+
+    // If we have visual data in newPeaks
+    if (!newPeaks.isEmpty()) {
+
+        // Add it to the waveForm data
+        m_waveformData.append(newPeaks);
+
+        // Purge old waveForm data
+        while (m_waveformData.size() > 300) {
+            m_waveformData.removeFirst();
+        }
+        emit waveformDataChanged();
     }
 }

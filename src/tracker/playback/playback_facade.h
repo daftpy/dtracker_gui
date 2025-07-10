@@ -22,6 +22,8 @@ class PlaybackFacade : public QObject
     Q_PROPERTY(bool loopPlayback READ loopPlayback WRITE setLoopPlayback NOTIFY loopPlaybackChanged)
     Q_PROPERTY(bool isPlaying READ isPlaying NOTIFY isPlayingChanged)
     Q_PROPERTY(float bpm READ bpm NOTIFY bpmChanged)
+
+    Q_PROPERTY(QVariantList waveformData READ waveformData NOTIFY waveformDataChanged)
 public:
     explicit PlaybackFacade(QObject *parent = nullptr);
 
@@ -49,6 +51,8 @@ public:
 
     Q_INVOKABLE void changeBpm(float value);
 
+    QVariantList waveformData() const;
+
 signals:
     void engineChanged();
     void sampleManagerChanged();
@@ -57,6 +61,8 @@ signals:
     void isPlayingChanged();
     void bpmChanged();
 
+    void waveformDataChanged();
+
 public slots:
     void handlePlaybackSample(dtracker::audio::playback::SamplePlaybackUnit* unit);
 
@@ -64,8 +70,10 @@ public slots:
 
     void handleIsPlayingChanged();
 
-private:
+private slots:
     void updateIsPlayingState();
+
+private:
     bool m_cachedIsPlaying{false};
     QTimer* m_playbackStatePoller{new QTimer(this)};
 
@@ -74,6 +82,9 @@ private:
     dtracker::tracker::TrackManager* m_trackManager{nullptr};
 
     std::unique_ptr<dtracker::audio::PlaybackManager> m_playbackManager;
+
+    // Internal storage for the master waveform data.
+    QVariantList m_waveformData;
 };
 
 #endif // PLAYBACK_FACADE_H

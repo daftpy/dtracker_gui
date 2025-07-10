@@ -438,6 +438,58 @@ Window {
                     }
                 }
 
+                Rectangle {
+                    Layout.preferredHeight: parent.implicitHeight
+                    Layout.preferredWidth: 100
+                    border.width: 1
+                    border.color: "#56585c"
+                    radius: 2
+                    color: "Transparent"
+
+                    Rectangle {
+                        id: waveformVisualizer
+                        anchors.fill: parent
+                        anchors.margins: 2
+                        color: "#1a1c1e"
+                        clip: true // Important for the view to not draw outside its bounds
+
+                        // A PathView is great for drawing dynamic shapes like this
+                        PathView {
+                            anchors.fill: parent
+
+                            // The model is the list of peaks from our C++ facade
+                            model: playbackFacade.waveformData
+
+                            // The delegate draws one vertical line for each peak data point
+                            delegate: Shape {
+                                width: 2 // Each vertical line is 2 pixels wide
+
+                                ShapePath {
+                                    strokeWidth: 2
+                                    strokeColor: "#30cf4c" // A nice green color
+
+                                    // Start the line at the minimum peak position
+                                    startX: 1
+                                    startY: waveformVisualizer.height / 2 - (modelData[0] * waveformVisualizer.height / 2)
+
+                                    // Draw a line to the maximum peak position
+                                    PathLine {
+                                        x: 1
+                                        y: waveformVisualizer.height / 2 - (modelData[1] * waveformVisualizer.height / 2)
+                                    }
+                                }
+                            }
+
+                            // This makes the waveform scroll from right to left
+                            path: Path {
+                                startX: waveformVisualizer.width
+                                startY: waveformVisualizer.height / 2
+                                PathLine { x: 0; y: waveformVisualizer.height / 2 }
+                            }
+                        }
+                    }
+                }
+
                 // Add Track Button
                 Rectangle {
                     width: stopTrackIcon.width + 10
