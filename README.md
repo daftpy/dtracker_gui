@@ -8,10 +8,7 @@ This project serves as the user-facing application that leverages the `dtracker_
 The application allows users to browse their file system for audio samples, manage a registry of loaded sounds, sequence those sounds in a multi-track pattern editor, and control playback with features like looping and dynamic tempo adjustment.
 
 ## Demo
-
-https://github.com/user-attachments/assets/725101a5-9d44-42af-a322-fc42357808da
-
-
+https://github.com/user-attachments/assets/3b2cac7c-9395-4edb-94d7-f659a2764139
 
 ## Core Features & Architecture
 The GUI is built using modern C++ and Qt 6 principles, emphasizing a decoupled and responsive design.
